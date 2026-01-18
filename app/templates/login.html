@@ -1,8 +1,8 @@
-a<!doctype html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Entrar no Setting</title>
 
   <style>
@@ -22,9 +22,10 @@ a<!doctype html>
     }
 
     *{ box-sizing:border-box; }
+
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       color:var(--text);
       background:
         radial-gradient(900px 500px at 20% 10%, var(--bg2), transparent 60%),
@@ -38,7 +39,7 @@ a<!doctype html>
 
     .wrap{
       width:100%;
-      max-width: 980px;
+      max-width: 900px;
       display:grid;
       grid-template-columns: 1.2fr 1fr;
       gap: 24px;
@@ -47,236 +48,140 @@ a<!doctype html>
 
     .hero{
       padding: 26px 22px;
-      border: 1px solid rgba(229,231,235,.8);
       border-radius: var(--radius);
-      background: rgba(255,255,255,.55);
-      backdrop-filter: blur(8px);
+      background: rgba(255,255,255,.6);
+      border:1px solid var(--border);
       box-shadow: 0 10px 35px rgba(17,24,39,.06);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border:1px solid rgba(229,231,235,.9);
-      background: rgba(255,255,255,.7);
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .dot{
-      width:10px;height:10px;border-radius:999px;
-      background: linear-gradient(135deg,var(--accent),var(--accent2));
-      box-shadow: 0 0 0 4px rgba(201,122,138,.18);
     }
 
     h1{
-      margin: 14px 0 8px 0;
-      font-size: 34px;
+      margin: 10px 0;
+      font-size: 32px;
       letter-spacing: -0.02em;
-      line-height: 1.12;
-    }
-    .sub{
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.55;
-      max-width: 52ch;
     }
 
-    .features{
-      margin-top: 18px;
-      display:grid;
-      gap: 10px;
+    .sub{
       color: var(--muted);
-      font-size: 14px;
-    }
-    .features li{ list-style:none; display:flex; gap:10px; align-items:flex-start; }
-    .check{
-      width:18px;height:18px;border-radius:6px;
-      border:1px solid rgba(229,231,235,.9);
-      background: rgba(255,255,255,.8);
-      display:grid; place-items:center;
-      flex: 0 0 auto;
-      margin-top: 1px;
-    }
-    .check:before{
-      content:"✓";
-      font-size: 12px;
-      background: linear-gradient(135deg,var(--accent),var(--accent2));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: 800;
+      font-size: 15px;
+      line-height: 1.6;
     }
 
     .card{
       background: var(--card);
-      border: 1px solid rgba(229,231,235,.85);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 22px;
+      padding: 24px;
+      border:1px solid var(--border);
       display:flex;
       flex-direction: column;
       justify-content: center;
-      min-height: 360px;
     }
 
     .card h2{
       margin:0 0 6px 0;
       font-size: 18px;
-      letter-spacing: -0.01em;
     }
+
     .card p{
       margin:0 0 16px 0;
       color: var(--muted);
-      font-size: 13.5px;
-      line-height: 1.5;
+      font-size: 14px;
     }
 
-    .field{ margin-bottom: 12px; }
     label{
       display:block;
-      font-size: 12.5px;
+      font-size: 13px;
       color: var(--muted);
-      margin: 0 0 6px 2px;
-    }
-    input{
-      width:100%;
-      padding: 12px 12px;
-      border-radius: 12px;
-      border:1px solid var(--border);
-      background: #fff;
-      font-size: 14.5px;
-      outline: none;
-      transition: box-shadow .15s ease, border-color .15s ease, transform .08s ease;
-    }
-    input:focus{
-      border-color: rgba(201,122,138,.65);
-      box-shadow: var(--focus);
+      margin-bottom: 6px;
     }
 
-    .row{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 8px;
+    input{
+      width:100%;
+      padding: 12px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      font-size: 14px;
       margin-bottom: 14px;
     }
 
-    .toggle{
-      display:flex;
-      align-items:center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--muted);
-      user-select:none;
+    input:focus{
+      outline:none;
+      border-color: var(--accent);
+      box-shadow: var(--focus);
     }
-    .toggle input{ width: 16px; height:16px; margin:0; }
 
     .btn{
       width:100%;
-      border:none;
-      padding: 12px 14px;
+      padding: 12px;
       border-radius: 12px;
+      border:none;
       font-weight: 700;
-      font-size: 14.5px;
-      color: #fff;
+      font-size: 14px;
+      color:#fff;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       cursor:pointer;
-      transition: transform .08s ease, filter .15s ease;
     }
-    .btn:hover{ filter: brightness(1.02); }
-    .btn:active{ transform: translateY(1px); }
+
+    .btn:hover{ filter: brightness(1.05); }
 
     .error{
-      border: 1px solid rgba(185,28,28,.25);
-      background: rgba(185,28,28,.06);
+      background: rgba(185,28,28,.08);
       color: var(--danger);
+      border:1px solid rgba(185,28,28,.25);
       padding: 10px 12px;
       border-radius: 12px;
       font-size: 13px;
-      margin: 0 0 14px 0;
+      margin-bottom: 14px;
     }
 
     .foot{
       margin-top: 14px;
-      color: var(--muted);
       font-size: 12.5px;
-      text-align: center;
+      color: var(--muted);
+      text-align:center;
     }
 
-    @media (max-width: 880px){
+    @media (max-width: 820px){
       .wrap{ grid-template-columns: 1fr; }
-      .hero{ order: 2; }
-      .card{ order: 1; }
     }
   </style>
 </head>
 
 <body>
   <div class="wrap">
+
     <section class="hero">
-      <div class="badge"><span class="dot"></span> Acesso restrito</div>
       <h1>Entrar no Setting</h1>
       <p class="sub">
-        Faça login para acessar documentos, editor e configurações.
+        <strong>Aplicativo desenvolvido para pesquisa sobre psicoterapia on-line</strong>,
+        idealizado por <strong>Sabrina Andrade Rocha</strong>.<br />
+        <strong>Login de acesso:</strong> usuário <strong>admin</strong> / senha <strong>admin</strong>.
       </p>
-
-      <ul class="features">
-        <li><span class="check"></span><span>Interface rápida e limpa para o dia a dia.</span></li>
-        <li><span class="check"></span><span>Login protegido por senha (definida no servidor).</span></li>
-        <li><span class="check"></span><span>Ideal para MVP e validação com usuários.</span></li>
-      </ul>
     </section>
 
     <main class="card">
-      <h2>Bem-vinda</h2>
-      <p>Use seu usuário e senha para continuar.</p>
+      <h2>Acesso restrito</h2>
+      <p>Informe suas credenciais para continuar.</p>
 
-      {# Se você já usa outra variável de erro, ajuste aqui #}
       {% if error %}
         <div class="error">{{ error }}</div>
       {% endif %}
 
       <form method="post" action="/login">
-        <div class="field">
-          <label for="username">Usuário</label>
-          <input id="username" name="username" type="text" autocomplete="username" required />
-        </div>
+        <label for="username">Usuário</label>
+        <input id="username" name="username" type="text" required />
 
-        <div class="field">
-          <label for="password">Senha</label>
-          <input id="password" name="password" type="password" autocomplete="current-password" required />
-        </div>
-
-        <div class="row">
-          <label class="toggle">
-            <input type="checkbox" id="showPass" />
-            Mostrar senha
-          </label>
-          <span style="font-size:12.5px;color:var(--muted);">Problemas? fale com a admin.</span>
-        </div>
+        <label for="password">Senha</label>
+        <input id="password" name="password" type="password" required />
 
         <button class="btn" type="submit">Entrar</button>
       </form>
 
-      <div class="foot">© {{ year if year else "2026" }} Setting</div>
+      <div class="foot">
+        © 2026 • Setting
+      </div>
     </main>
-  </div>
 
-  <script>
-    const cb = document.getElementById("showPass");
-    const pw = document.getElementById("password");
-    if (cb && pw){
-      cb.addEventListener("change", () => {
-        pw.type = cb.checked ? "text" : "password";
-      });
-    }
-  </script>
+  </div>
 </body>
 </html>
