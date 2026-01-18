@@ -6,3 +6,4 @@ passlib[bcrypt]==1.7.4
 itsdangerous==2.2.0
 sqlalchemy==2.0.36
 pydantic==2.9.2
+fpdf2==2.7.9
