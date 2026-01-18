@@ -1,0 +1,15 @@
+# Ambiente virtual
+.venv/
+
+# Banco de dados local
+app/data/*.db
+
+# PDFs e arquivos gerados
+app/data/generated/
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Variáveis de ambiente (se existir)
+.env

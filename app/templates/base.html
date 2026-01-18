@@ -28,5 +28,30 @@
   O uso é de responsabilidade do(a) profissional, conforme o Código de Ética
   e as Resoluções do CFP.
 </footer>
+<script>
+  // ESC = Modo Sigilo (blur)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === "Escape") {
+      document.body.classList.toggle("privacy-blur");
+    }
+  });
+
+  // Alt + D = Modo Escuro
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey && (e.key === 'd' || e.key === 'D')) {
+      document.body.classList.toggle("dark-mode");
+      try { localStorage.setItem("setting_dark", document.body.classList.contains("dark-mode") ? "1" : "0"); } catch {}
+    }
+  });
+
+  // Persistência do modo escuro
+  (function() {
+    try {
+      if (localStorage.getItem("setting_dark") === "1") {
+        document.body.classList.add("dark-mode");
+      }
+    } catch {}
+  })();
+</script>
 </body>
 </html>

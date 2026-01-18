@@ -1,71 +1,159 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Documentos (modelos)</h1>
-  <p class="muted">Edite modelos e gere uma versão preenchida (texto puro). Em seguida você pode colar no Word/Docs.</p>
 
-  <div class="grid2">
-    <div class="card">
-      <h2>Criar novo modelo</h2>
-      <form method="post" action="/documentos/add">
-        <label>Nome</label>
-        <input name="name" required>
-        <label>Corpo</label>
-        <textarea name="body" rows="10" placeholder="Use variáveis: {{PROFISSIONAL_NOME}}, {{CRP}}, {{PACIENTE_NOME}}, {{DATA}} ..."></textarea>
-        <button type="submit">Criar</button>
-      </form>
+<div class="card tip" style="margin-bottom:14px;">
+  <h2>Gerar PDF (modelo)</h2>
+  <p class="muted">Gera um PDF de modelo (declaração/atestado) para você revisar e usar no Word/Docs, se desejar.</p>
 
-      <div class="card tip">
-        <h3>Variáveis suportadas</h3>
-        <div class="tag">{{"{{PROFISSIONAL_NOME}}"}}</div>
-        <div class="tag">{{"{{CRP}}"}}</div>
-        <div class="tag">{{"{{PACIENTE_NOME}}"}}</div>
-        <div class="tag">{{"{{DATA}}"}}</div>
-        <div class="tag">{{"{{TOLERANCIA_MIN}}"}}</div>
-        <div class="tag">{{"{{PAGAMENTO_REGRAS}}"}}</div>
-        <div class="tag">{{"{{REAGENDAMENTO_REGRAS}}"}}</div>
-        <div class="tag">{{"{{JANELA_CONTATO}}"}}</div>
-      </div>
-    </div>
+  <form method="post" action="/documentos/gerar-documento-pdf" target="_blank">
+    <label>Tipo</label>
+    <select name="tipo">
+      <option value="declaracao">Declaração de comparecimento (modelo)</option>
+      <option value="atestado">Atestado (modelo)</option>
+    </select>
 
-    <div class="card">
-      <h2>Modelos</h2>
-      {% for d in docs %}
-        <details class="item">
-          <summary><strong>{{ d.name }}</strong> <span class="muted">({{ d.created_at.strftime("%d/%m/%Y") }})</span></summary>
+    <label>Paciente (nome/apelido)</label>
+    <input name="paciente" placeholder="ex.: Paciente X (ou apelido)">
 
-          <form method="post" action="/documentos/update" class="subform">
-            <input type="hidden" name="doc_id" value="{{ d.id }}">
-            <label>Nome</label>
-            <input name="name" value="{{ d.name }}" required>
-            <label>Corpo</label>
-            <textarea name="body" rows="10">{{ d.body }}</textarea>
-            <button type="submit">Salvar alterações</button>
-          </form>
+    <label>Profissional</label>
+    <input name="profissional" placeholder="Seu nome">
 
-          <hr>
+    <label>CRP</label>
+    <input name="crp" placeholder="00/00000">
 
-          <form method="post" action="/documentos/render" target="_blank" class="subform">
-            <input type="hidden" name="doc_id" value="{{ d.id }}">
-            <label>Profissional</label>
-            <input name="profissional_nome" placeholder="Seu nome">
-            <label>CRP</label>
-            <input name="crp" placeholder="00/00000">
-            <label>Paciente</label>
-            <input name="paciente_nome" placeholder="Nome (se for usar)">
-            <label>Data</label>
-            <input name="data" placeholder="dd/mm/aaaa">
-            <label>Tolerância (min)</label>
-            <input name="tolerancia_min" value="10">
-            <label>Regras de pagamento</label>
-            <input name="pagamento_regras" placeholder="ex.: Pix até 24h antes">
-            <label>Reagendamento/cancelamento</label>
-            <input name="reagendamento_regras" placeholder="ex.: até 24h antes">
-            <label>Janela de contato entre sessões</label>
-            <input name="janela_contato" placeholder="ex.: seg-sex 9h–18h (não emergências)">
-            <button type="submit">Gerar texto preenchido</button>
-          </form>
-        </details>
-      {% endfor %}
+    <label>Cidade/UF</label>
+    <input name="cidade_uf" placeholder="ex.: Uberlândia/MG">
+
+    <label>Data de emissão</label>
+    <input name="data_emissao" placeholder="dd/mm/aaaa">
+
+    <button type="submit">Gerar PDF</button>
+  </form>
+</div>
+
+<h1>Documentos (modelos)</h1>
+<p class="muted">Edite modelos e gere uma versão preenchida. Você pode copiar o texto gerado e colar no Word/Docs.</p>
+
+<div class="grid2">
+
+  <div class="card">
+    <h2>Criar novo modelo</h2>
+
+    <form method="post" action="/documentos/add">
+      <label>Nome</label>
+      <input name="name" required>
+
+      <label>Corpo</label>
+      <textarea name="body" rows="10"
+        placeholder="Use variáveis: {% raw %}{{PROFISSIONAL_NOME}}, {{CRP}}, {{PACIENTE_NOME}}, {{DATA}}{% endraw %} ..."></textarea>
+
+      <button type="submit">Criar</button>
+    </form>
+
+    <div class="card tip" style="margin-top:12px;">
+      <h3>Variáveis suportadas</h3>
+      <div class="tag">{% raw %}{{PROFISSIONAL_NOME}}{% endraw %}</div>
+      <div class="tag">{% raw %}{{CRP}}{% endraw %}</div>
+      <div class="tag">{% raw %}{{PACIENTE_NOME}}{% endraw %}</div>
+      <div class="tag">{% raw %}{{DATA}}{% endraw %}</div>
+      <div class="tag">{% raw %}{{TOLERANCIA_MIN}}{% endraw %}</div>
+      <div class="tag">{% raw %}{{PAGAMENTO_REGRAS}}{% endraw %}</div>
+      <div class="tag">{% raw %}{{REAGENDAMENTO_REGRAS}}{% endraw %}</div>
+      <div class="tag">{% raw %}{{JANELA_CONTATO}}{% endraw %}</div>
     </div>
   </div>
+
+  <div class="card">
+    <h2>Modelos</h2>
+
+    {% if docs and (docs|length > 0) %}
+      <div class="muted" style="margin:8px 0 12px;">
+        Dica: clique em <strong>Editar</strong> para abrir/fechar o modelo, salvar alterações e gerar texto preenchido.
+      </div>
+
+      {% for d in docs %}
+        <div class="item">
+          <div class="itemhead">
+            <strong>{{ d.name }}</strong>
+            <span class="muted">
+              {% if d.created_at %}
+                {{ d.created_at.strftime("%d/%m/%Y") }}
+              {% else %}
+                -
+              {% endif %}
+            </span>
+          </div>
+
+          <div class="row" style="margin-top:8px; gap:10px;">
+            <button type="button" class="btn" onclick="toggleEdit('{{ d.id }}')">Editar</button>
+
+            <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este modelo?');">
+              <input type="hidden" name="doc_id" value="{{ d.id }}">
+              <button class="danger" type="submit">Apagar</button>
+            </form>
+          </div>
+
+          <div id="edit-{{ d.id }}" style="display:none; margin-top:10px;">
+            <form method="post" action="/documentos/update" class="subform">
+              <input type="hidden" name="doc_id" value="{{ d.id }}">
+
+              <label>Nome</label>
+              <input name="name" value="{{ d.name }}" required>
+
+              <label>Corpo</label>
+              <textarea name="body" rows="12">{{ d.body }}</textarea>
+
+              <button type="submit">Salvar alterações</button>
+            </form>
+
+            <hr>
+
+            <form method="post" action="/documentos/render" target="_blank" class="subform">
+              <input type="hidden" name="doc_id" value="{{ d.id }}">
+
+              <label>Profissional</label>
+              <input name="profissional_nome" placeholder="Seu nome">
+
+              <label>CRP</label>
+              <input name="crp" placeholder="00/00000">
+
+              <label>Paciente</label>
+              <input name="paciente_nome" placeholder="Nome (se for usar)">
+
+              <label>Data</label>
+              <input name="data" placeholder="dd/mm/aaaa">
+
+              <label>Tolerância (min)</label>
+              <input name="tolerancia_min" value="10">
+
+              <label>Regras de pagamento</label>
+              <input name="pagamento_regras" placeholder="ex.: Pix até 24h antes">
+
+              <label>Reagendamento/cancelamento</label>
+              <input name="reagendamento_regras" placeholder="ex.: até 24h antes">
+
+              <label>Janela de contato entre sessões</label>
+              <input name="janela_contato" placeholder="ex.: seg-sex 9h-18h (nao emergencias)">
+
+              <button type="submit">Gerar texto preenchido</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+
+      <script>
+        function toggleEdit(id) {
+          const el = document.getElementById('edit-' + id);
+          if (!el) return;
+          el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+        }
+      </script>
+
+    {% else %}
+      <p class="muted">Sem modelos ainda.</p>
+    {% endif %}
+  </div>
+
+</div>
+
 {% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Documento gerado</h1>
+  <p class="muted">Copie o texto abaixo e cole no Word/Docs.</p>
+
+  <div class="card">
+    <div class="row" style="justify-content: space-between;">
+      <strong>{{ title }}</strong>
+      <button type="button" class="btn" onclick="copyText()">Copiar</button>
+    </div>
+
+    <pre class="pre" id="docText">{{ text }}</pre>
+
+    <p class="muted" style="margin-top:10px;">
+      Este conteúdo é exibido como texto para revisão. Você também pode gerar um PDF (modelo) na seção Documentos.
+    </p>
+  </div>
+
+  <script>
+    function copyText() {
+      const el = document.getElementById("docText");
+      const txt = el.innerText;
+      navigator.clipboard.writeText(txt).then(() => {
+        alert("Texto copiado!");
+      }).catch(() => {
+        alert("Não consegui copiar automaticamente. Selecione o texto e copie manualmente.");
+      });
+    }
+  </script>
+{% endblock %}
