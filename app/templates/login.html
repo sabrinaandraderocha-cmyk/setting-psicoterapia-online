@@ -39,23 +39,22 @@
 
     .wrap{
       width:100%;
-      max-width: 900px;
+      max-width: 980px;
       display:grid;
       grid-template-columns: 1.2fr 1fr;
       gap: 24px;
-      align-items: stretch;
     }
 
     .hero{
-      padding: 26px 22px;
+      padding: 28px;
       border-radius: var(--radius);
-      background: rgba(255,255,255,.6);
+      background: rgba(255,255,255,.65);
       border:1px solid var(--border);
       box-shadow: 0 10px 35px rgba(17,24,39,.06);
     }
 
     h1{
-      margin: 10px 0;
+      margin: 0 0 12px 0;
       font-size: 32px;
       letter-spacing: -0.02em;
     }
@@ -63,14 +62,14 @@
     .sub{
       color: var(--muted);
       font-size: 15px;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     .card{
       background: var(--card);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 24px;
+      padding: 26px;
       border:1px solid var(--border);
       display:flex;
       flex-direction: column;
@@ -83,7 +82,7 @@
     }
 
     .card p{
-      margin:0 0 16px 0;
+      margin:0 0 14px 0;
       color: var(--muted);
       font-size: 14px;
     }
@@ -135,13 +134,13 @@
     }
 
     .foot{
-      margin-top: 14px;
+      margin-top: 16px;
       font-size: 12.5px;
       color: var(--muted);
       text-align:center;
     }
 
-    @media (max-width: 820px){
+    @media (max-width: 860px){
       .wrap{ grid-template-columns: 1fr; }
     }
   </style>
@@ -151,16 +150,26 @@
   <div class="wrap">
 
     <section class="hero">
-      <h1>Entrar no Setting</h1>
+      <h1>Bem-vinda(o) ao Setting</h1>
+
       <p class="sub">
-        <strong>Aplicativo desenvolvido para pesquisa sobre psicoterapia on-line</strong>,
-        idealizado por <strong>Sabrina Andrade Rocha</strong>.<br />
-        <strong>Login de acesso:</strong> usuário <strong>admin</strong> / senha <strong>admin</strong>.
+        Aplicativo desenvolvido <strong>no âmbito de pesquisa sobre psicoterapia on-line</strong>,
+        idealizado por <strong>Sabrina Andrade Rocha</strong>.<br /><br />
+
+        Este ambiente é destinado a <strong>testes e demonstrações do aplicativo</strong>.<br /><br />
+
+        <strong>Credenciais de acesso:</strong><br />
+        Usuário: <strong>admin</strong><br />
+        Senha: <strong>admin</strong><br /><br />
+
+        Dúvidas ou dificuldades de acesso?<br />
+        Entre em contato pelo e-mail:<br />
+        <strong>sabrina.andrade.rocha@gmail.com</strong>
       </p>
     </section>
 
     <main class="card">
-      <h2>Acesso restrito</h2>
+      <h2>Acesso ao aplicativo</h2>
       <p>Informe suas credenciais para continuar.</p>
 
       {% if error %}
