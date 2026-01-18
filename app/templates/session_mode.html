@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Modo Sessão</h1>
+
+  <p class="muted">
+    Use apelidos ou códigos. Não insira dados pessoais identificáveis.
+  </p>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Adicionar nota</h2>
+      <form method="post" action="/modo-sessao/add">
+        <label>Etapa</label>
+        <select name="stage" required>
+          <option value="pre">Pré-sessão</option>
+          <option value="during">Durante</option>
+          <option value="post">Pós-sessão</option>
+        </select>
+
+        <label>Paciente (apelido)</label>
+        <input name="patient_alias" placeholder="ex.: P01, Caso TCC, Caso histórico">
+
+        <label>Conteúdo</label>
+        <textarea name="content" rows="6" placeholder="Checklist rápido, foco, intervenção, plano..." required></textarea>
+
+        <button type="submit">Salvar</button>
+      </form>
+
+      <hr>
+
+      <h2>Filtro</h2>
+      <form method="get" action="/modo-sessao">
+        <label>Filtrar por paciente/apelido</label>
+        <select name="patient">
+          <option value="" {% if not selected_patient %}selected{% endif %}>Todos</option>
+          {% for p in patients %}
+            <option value="{{ p }}" {% if selected_patient == p %}selected{% endif %}>{{ p }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Aplicar filtro</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Últimas notas</h2>
+
+      {% if notes|length == 0 %}
+        <p class="muted">Sem notas ainda.</p>
+      {% else %}
+
+        {# Agrupamento por paciente/apelido #}
+        {% for group in notes|groupby('patient_alias') %}
+          <div class="item">
+            <div class="itemhead">
+              <strong>
+                Paciente: {% if group.grouper %}{{ group.grouper }}{% else %}Sem apelido{% endif %}
+              </strong>
+            </div>
+
+            {% for n in group.list %}
+              <div class="item" style="border-top:none;">
+                <div class="itemhead">
+                  <strong>
+                    {% if n.stage == "pre" %}Pré{% elif n.stage == "during" %}Durante{% else %}Pós{% endif %}
+                  </strong>
+                  <span class="muted">{{ n.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
+                </div>
+
+                <pre class="pre">{{ n.content }}</pre>
+
+                <details class="subform">
+                  <summary><strong>Editar</strong></summary>
+
+                  <form method="post" action="/modo-sessao/update">
+                    <input type="hidden" name="note_id" value="{{ n.id }}">
+
+                    <label>Etapa</label>
+                    <select name="stage" required>
+                      <option value="pre" {% if n.stage == "pre" %}selected{% endif %}>Pré-sessão</option>
+                      <option value="during" {% if n.stage == "during" %}selected{% endif %}>Durante</option>
+                      <option value="post" {% if n.stage == "post" %}selected{% endif %}>Pós-sessão</option>
+                    </select>
+
+                    <label>Paciente (apelido)</label>
+                    <input name="patient_alias" value="{{ n.patient_alias }}">
+
+                    <label>Conteúdo</label>
+                    <textarea name="content" rows="6" required>{{ n.content }}</textarea>
+
+                    <button type="submit">Salvar alterações</button>
+                  </form>
+                </details>
+
+                <form method="post" action="/modo-sessao/delete" onsubmit="return confirm('Apagar esta nota?');">
+                  <input type="hidden" name="note_id" value="{{ n.id }}">
+                  <button class="danger" type="submit">Apagar</button>
+                </form>
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

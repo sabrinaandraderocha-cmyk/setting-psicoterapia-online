@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login · Setting</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="container narrow">
+    <h1>Entrar no Setting</h1>
+    <p class="muted">MVP local. Use as credenciais padrão (admin/admin) ou altere em <code>app/core/config.py</code>.</p>
+    {% if error %}
+      <div class="card error">{{ error }}</div>
+    {% endif %}
+    <form method="post" action="/login" class="card">
+      <label>Usuário</label>
+      <input name="username" autocomplete="username" required>
+      <label>Senha</label>
+      <input type="password" name="password" autocomplete="current-password" required>
+      <button type="submit">Entrar</button>
+    </form>
+  </main>
+</body>
+</html>

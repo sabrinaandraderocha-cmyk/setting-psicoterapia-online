@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Normas (cards práticos)</h1>
+  <p class="muted">Cadastre resoluções, artigos e sínteses. A ideia é transformar norma em “ação prática”.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Novo card</h2>
+      <form method="post" action="/normas/add">
+        <label>Título</label>
+        <input name="title" placeholder="ex.: CFP 09/2024 — pontos de atenção" required>
+
+        <label>Fonte (opcional)</label>
+        <input name="source" placeholder="ex.: link, referência, documento interno">
+
+        <label>Resumo prático</label>
+        <textarea name="practical_summary" rows="6" placeholder="O que eu preciso fazer na prática?"></textarea>
+
+        <label>Tags (separe por vírgula)</label>
+        <input name="tags" placeholder="ex.: online, sigilo, LGPD, contrato">
+
+        <button type="submit">Salvar</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Cards</h2>
+      {% if cards|length == 0 %}
+        <p class="muted">Sem cards ainda.</p>
+      {% else %}
+        {% for c in cards %}
+          <div class="item">
+            <div class="itemhead">
+              <strong>{{ c.title }}</strong>
+              <span class="muted">{{ c.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
+            </div>
+            {% if c.source %}
+              <div class="muted">Fonte: {{ c.source }}</div>
+            {% endif %}
+            {% if c.tags %}
+              <div class="tag">Tags: {{ c.tags }}</div>
+            {% endif %}
+            {% if c.practical_summary %}
+              <pre class="pre">{{ c.practical_summary }}</pre>
+            {% endif %}
+            <form method="post" action="/normas/delete" onsubmit="return confirm('Apagar este card?');">
+              <input type="hidden" name="card_id" value="{{ c.id }}">
+              <button class="danger" type="submit">Apagar</button>
+            </form>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

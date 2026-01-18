@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Documentos (modelos)</h1>
+  <p class="muted">Edite modelos e gere uma versão preenchida (texto puro). Em seguida você pode colar no Word/Docs.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Criar novo modelo</h2>
+      <form method="post" action="/documentos/add">
+        <label>Nome</label>
+        <input name="name" required>
+        <label>Corpo</label>
+        <textarea name="body" rows="10" placeholder="Use variáveis: {{PROFISSIONAL_NOME}}, {{CRP}}, {{PACIENTE_NOME}}, {{DATA}} ..."></textarea>
+        <button type="submit">Criar</button>
+      </form>
+
+      <div class="card tip">
+        <h3>Variáveis suportadas</h3>
+        <div class="tag">{{"{{PROFISSIONAL_NOME}}"}}</div>
+        <div class="tag">{{"{{CRP}}"}}</div>
+        <div class="tag">{{"{{PACIENTE_NOME}}"}}</div>
+        <div class="tag">{{"{{DATA}}"}}</div>
+        <div class="tag">{{"{{TOLERANCIA_MIN}}"}}</div>
+        <div class="tag">{{"{{PAGAMENTO_REGRAS}}"}}</div>
+        <div class="tag">{{"{{REAGENDAMENTO_REGRAS}}"}}</div>
+        <div class="tag">{{"{{JANELA_CONTATO}}"}}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Modelos</h2>
+      {% for d in docs %}
+        <details class="item">
+          <summary><strong>{{ d.name }}</strong> <span class="muted">({{ d.created_at.strftime("%d/%m/%Y") }})</span></summary>
+
+          <form method="post" action="/documentos/update" class="subform">
+            <input type="hidden" name="doc_id" value="{{ d.id }}">
+            <label>Nome</label>
+            <input name="name" value="{{ d.name }}" required>
+            <label>Corpo</label>
+            <textarea name="body" rows="10">{{ d.body }}</textarea>
+            <button type="submit">Salvar alterações</button>
+          </form>
+
+          <hr>
+
+          <form method="post" action="/documentos/render" target="_blank" class="subform">
+            <input type="hidden" name="doc_id" value="{{ d.id }}">
+            <label>Profissional</label>
+            <input name="profissional_nome" placeholder="Seu nome">
+            <label>CRP</label>
+            <input name="crp" placeholder="00/00000">
+            <label>Paciente</label>
+            <input name="paciente_nome" placeholder="Nome (se for usar)">
+            <label>Data</label>
+            <input name="data" placeholder="dd/mm/aaaa">
+            <label>Tolerância (min)</label>
+            <input name="tolerancia_min" value="10">
+            <label>Regras de pagamento</label>
+            <input name="pagamento_regras" placeholder="ex.: Pix até 24h antes">
+            <label>Reagendamento/cancelamento</label>
+            <input name="reagendamento_regras" placeholder="ex.: até 24h antes">
+            <label>Janela de contato entre sessões</label>
+            <input name="janela_contato" placeholder="ex.: seg-sex 9h–18h (não emergências)">
+            <button type="submit">Gerar texto preenchido</button>
+          </form>
+        </details>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

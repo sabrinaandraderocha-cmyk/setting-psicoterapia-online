@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Biblioteca</h1>
+
+  <div class="card">
+    <h2>Biblioteca base · Setting</h2>
+    <p class="muted">
+      Artigos autorais disponibilizados como material de referência para reflexão e formação na psicoterapia on-line.
+    </p>
+
+    <ul>
+      <li>
+        <a href="/static/biblioteca_base/psicoterapia_online_jovens.pdf" target="_blank">
+          Psicoterapia on-line com jovens
+        </a>
+      </li>
+      <li>
+        <a href="/static/biblioteca_base/psicoterapia_online_ampliar_limitar.pdf" target="_blank">
+          Psicoterapia on-line: ampliar e limitar
+        </a>
+      </li>
+      <li>
+        <a href="/static/biblioteca_base/origens_psicoterapia.pdf" target="_blank">
+          Origens da psicoterapia
+        </a>
+      </li>
+    </ul>
+
+    <p class="muted">
+      <strong>Nota:</strong> Os textos acima possuem finalidade acadêmica e formativa.
+      Não constituem protocolos clínicos nem substituem formação, supervisão ou julgamento técnico do(a) profissional.
+    </p>
+  </div>
+
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <h2>Upload (biblioteca pessoal)</h2>
+      <p class="muted">Envie seus artigos (PDF) e registre notas para usar na prática.</p>
+
+      <form method="post" action="/biblioteca/upload" enctype="multipart/form-data">
+        <label>Título</label>
+        <input name="title" required>
+
+        <label>Notas</label>
+        <textarea name="notes" rows="5" placeholder="Resumo, insights, aplicação clínica..."></textarea>
+
+        <label>Arquivo (PDF)</label>
+        <input type="file" name="file" accept="application/pdf" required>
+
+        <button type="submit">Enviar</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Itens (uploads)</h2>
+
+      {% if items|length == 0 %}
+        <p class="muted">Sem arquivos ainda.</p>
+      {% else %}
+        {% for it in items %}
+          <div class="item">
+            <div class="itemhead">
+              <strong>{{ it.title }}</strong>
+              <span class="muted">{{ it.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
+            </div>
+
+            {% if it.notes %}
+              <pre class="pre">{{ it.notes }}</pre>
+            {% endif %}
+
+            <div class="row">
+              <a class="btn" href="/biblioteca/file/{{ it.id }}">Baixar/abrir</a>
+
+              <form method="post" action="/biblioteca/delete" onsubmit="return confirm('Remover este item?');">
+                <input type="hidden" name="item_id" value="{{ it.id }}">
+                <button class="danger" type="submit">Apagar</button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ app_name if app_name else "Setting" }}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Setting · psicoterapia on-line</div>
+    <nav class="nav">
+      <a href="/">Início</a>
+      <a href="/modo-sessao">Modo Sessão</a>
+      <a href="/normas">Normas</a>
+      <a href="/documentos">Documentos</a>
+      <a href="/biblioteca">Biblioteca</a>
+      <a href="/logout">Sair</a>
+    </nav>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="footer">
+  <strong>Aviso ético:</strong>
+  O Setting é uma ferramenta de apoio à organização da psicoterapia on-line.
+  Não substitui prontuário clínico nem armazena dados sensíveis por padrão.
+  O uso é de responsabilidade do(a) profissional, conforme o Código de Ética
+  e as Resoluções do CFP.
+</footer>
+</body>
+</html>
