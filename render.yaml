@@ -1,14 +1,8 @@
 services:
   - type: web
-    name: setting
+    name: setting-psicoterapia-online
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install --no-cache-dir -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: SECRET_KEY
-        generateValue: true
-      - key: ADMIN_USERNAME
-        value: admin
-      - key: ADMIN_PASSWORD
-        value: troque-esta-senha
+    autoDeploy: true
