@@ -8,7 +8,7 @@
 
   <p class="muted" style="font-size:13px;">
     Orientação: registre principalmente <strong>suas intervenções e condutas clínicas</strong>, de acordo com a sua abordagem,
-    sem detalhar a história do caso. Priorize o que sustenta continuidade do processo (hipóteses, foco, combinados e encaminhamentos).
+    sem detalhar a história do caso. Priorize o que sustenta continuidade do processo (foco, intervenções, combinados e encaminhamentos).
   </p>
 
   <div class="grid2">
@@ -27,13 +27,19 @@
 
         <label>Conteúdo (mínimo necessário)</label>
         <textarea id="sessionContent" name="content" rows="12" required
-          placeholder="Utilize o modelo sugerido ou escreva livremente, mantendo o mínimo necessário."></textarea>
+          placeholder="Escolha um modelo sugerido ou escreva livremente (mínimo necessário)."></textarea>
 
         <div class="row" style="margin-top:10px;">
-          <button type="button" class="btn" onclick="insertTemplate()">Inserir modelo de registro</button>
+          <button type="button" class="btn" onclick="insertTemplateHumanista()">Modelo humanista</button>
+          <button type="button" class="btn" onclick="insertTemplateTCC()">Modelo TCC</button>
+          <button type="button" class="btn" onclick="insertTemplatePsicanalise()">Modelo psicanálise</button>
           <button type="submit">Salvar registro</button>
         </div>
       </form>
+
+      <p class="muted" style="font-size:12px; margin-top:8px;">
+        Dica: modelos servem como guia. Ajuste os campos conforme sua abordagem e o contexto do atendimento.
+      </p>
 
       <hr>
 
@@ -81,14 +87,14 @@
                   <form method="post" action="/modo-sessao/update">
                     <input type="hidden" name="note_id" value="{{ n.id }}">
 
-                    <!-- Mantém compatibilidade com o backend (sem mostrar pré/durante/pós) -->
+                    <!-- Mantém compatibilidade com o backend -->
                     <input type="hidden" name="stage" value="during">
 
                     <label>Paciente (código ou apelido)</label>
                     <input name="patient_alias" value="{{ n.patient_alias }}">
 
                     <label>Conteúdo (mínimo necessário)</label>
-                    <textarea name="content" rows="10" required>{{ n.content }}</textarea>
+                    <textarea name="content" rows="12" required>{{ n.content }}</textarea>
 
                     <button type="submit">Salvar alterações</button>
                   </form>
@@ -108,32 +114,115 @@
   </div>
 
   <script>
-    function insertTemplate() {
+    function confirmReplaceIfNeeded(textarea) {
+      if (textarea.value.trim() !== "") {
+        return confirm("Deseja substituir o conteúdo atual pelo modelo sugerido?");
+      }
+      return true;
+    }
+
+    function insertTemplateHumanista() {
       const textarea = document.getElementById("sessionContent");
       if (!textarea) return;
-
-      if (textarea.value.trim() !== "") {
-        const ok = confirm("Deseja substituir o conteúdo atual pelo modelo sugerido?");
-        if (!ok) return;
-      }
+      if (!confirmReplaceIfNeeded(textarea)) return;
 
       textarea.value =
 `Data: (automática)
 
-Foco da sessão (1 linha):
+Foco vivido / tema emergente (experiência):
 - 
 
-Intervenções realizadas (conforme sua abordagem):
+Vivência e campo (o que se apresentou na relação e no contexto):
 - 
 
-Combinados/limites do setting:
+Intervenções do(a) terapeuta (congruentes com a abordagem):
+- Presença / escuta / devolução
+- Clarificação de experiência e sentidos
+- Facilitação de simbolização (quando aplicável)
+- Ajuste de limites e cuidado com o setting
+
+Combinados e limites (setting digital / entre sessões):
 - 
 
-Encaminhamentos / próximos passos:
+Continuidade (próximos passos / encaminhamentos):
 - 
 
 Observação ética:
-- Registro mínimo necessário, sem dados identificáveis ou narrativa detalhada do caso.`;
+- Mínimo necessário, sem dados identificáveis e sem narrativa detalhada do caso.`;
+    }
+
+    function insertTemplateTCC() {
+      const textarea = document.getElementById("sessionContent");
+      if (!textarea) return;
+      if (!confirmReplaceIfNeeded(textarea)) return;
+
+      textarea.value =
+`Data: (automática)
+
+Agenda / foco da sessão:
+- 
+
+Situação-alvo (descrição mínima, sem identificação):
+- 
+
+Cognições-chave (pensamentos automáticos / crenças relevantes):
+- 
+
+Emoções e intensidade (0–10):
+- 
+
+Comportamentos / estratégias atuais:
+- 
+
+Intervenções do(a) terapeuta (TCC):
+- Psicoeducação (se aplicável)
+- Questionamento socrático / reestruturação
+- Técnicas comportamentais (exposição, ativação, etc.)
+- Treino de habilidades (se aplicável)
+
+Tarefa de casa / plano entre sessões:
+- 
+
+Combinados e limites do setting:
+- 
+
+Observação ética:
+- Registro mínimo necessário, sem dados identificáveis e sem narrativa detalhada do caso.`;
+    }
+
+    function insertTemplatePsicanalise() {
+      const textarea = document.getElementById("sessionContent");
+      if (!textarea) return;
+      if (!confirmReplaceIfNeeded(textarea)) return;
+
+      textarea.value =
+`Data: (automática)
+
+Tema dominante / material emergente (sem detalhes identificáveis):
+- 
+
+Associações e elementos recorrentes:
+- 
+
+Afetos mobilizados e variações:
+- 
+
+Movimentos transferenciais / contratransferenciais (quando pertinente):
+- 
+
+Intervenções do(a) analista:
+- Manejo do enquadre / setting
+- Pontuações / interpretações (se aplicável)
+- Silêncios, cortes, devoluções
+
+Combinados e limites do setting:
+- 
+
+Indicações de continuidade (próximos passos / encaminhamentos):
+- 
+
+Observação ética:
+- Mínimo necessário, sem dados identificáveis e sem narrativa detalhada do caso.`;
     }
   </script>
 {% endblock %}
