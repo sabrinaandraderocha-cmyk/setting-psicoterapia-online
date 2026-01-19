@@ -1,14 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Biblioteca</h1>
 
-  <div class="card">
-    <h2>Biblioteca base · Setting</h2>
-    <p class="muted">
-      Artigos autorais disponibilizados como material de referência para reflexão e formação na psicoterapia on-line.
+<h1>Biblioteca</h1>
+
+<div class="grid2" style="margin-top:16px; align-items:start;">
+
+  <!-- Biblioteca base (fixa) -->
+  <div class="card tip">
+    <div class="row" style="justify-content:space-between;">
+      <h2 style="margin:0;">Biblioteca base · Setting</h2>
+      <span class="tag">Conteúdo autoral</span>
+    </div>
+
+    <p class="muted" style="margin-top:10px;">
+      Textos autorais disponibilizados como material de referência para reflexão e formação em psicoterapia on-line.
+      Esta biblioteca é fixa e não depende de uploads.
     </p>
 
-    <ul>
+    <ul style="margin-top:10px;">
       <li>
         <a href="/static/biblioteca_base/psicoterapia_online_jovens.pdf" target="_blank">
           A psicoterapia on-line e a geração Z: um ensaio sobre possibilidades
@@ -26,59 +35,70 @@
       </li>
     </ul>
 
-    <p class="muted">
-      <strong>Os textos acima possuem finalidade acadêmica e formativa.</strong>
-      Não constituem protocolos clínicos nem substituem formação, supervisão ou julgamento técnico do(a) profissional.
+    <p class="muted" style="font-size:12px; margin-top:12px;">
+      Os textos acima possuem finalidade acadêmica e formativa. Não constituem protocolos clínicos e não substituem
+      formação, supervisão ou julgamento técnico-profissional.
     </p>
   </div>
 
-  <div class="grid2" style="margin-top:14px;">
-    <div class="card">
-      <h2>Upload</h2>
-      <p class="muted">Envie seus artigos (PDF) e registre notas para usar na prática.</p>
-
-      <form method="post" action="/biblioteca/upload" enctype="multipart/form-data">
-        <label>Título</label>
-        <input name="title" required>
-
-        <label>Notas</label>
-        <textarea name="notes" rows="5" placeholder="Resumo, insights, aplicação clínica..."></textarea>
-
-        <label>Arquivo (PDF)</label>
-        <input type="file" name="file" accept="application/pdf" required>
-
-        <button type="submit">Enviar</button>
-      </form>
+  <!-- Biblioteca do usuário (uploads) -->
+  <div class="card">
+    <div class="row" style="justify-content:space-between;">
+      <h2 style="margin:0;">Biblioteca do profissional</h2>
+      <span class="tag">Uploads e notas</span>
     </div>
 
-    <div class="card">
-      <h2>Itens (uploads)</h2>
+    <p class="muted" style="margin-top:10px;">
+      Envie seus artigos (PDF) e registre notas para uso formativo e organização da prática.
+      Evite inserir dados pessoais identificáveis e mantenha o mínimo necessário.
+    </p>
 
-      {% if items|length == 0 %}
-        <p class="muted">Sem arquivos ainda.</p>
-      {% else %}
-        {% for it in items %}
-          <div class="item">
-            <div class="itemhead">
-              <strong>{{ it.title }}</strong>
-              <span class="muted">{{ it.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
-            </div>
+    <hr>
 
-            {% if it.notes %}
-              <pre class="pre">{{ it.notes }}</pre>
-            {% endif %}
+    <h3 style="margin:0 0 8px;">Upload</h3>
+    <form method="post" action="/biblioteca/upload" enctype="multipart/form-data">
+      <label>Título</label>
+      <input name="title" required placeholder="Ex.: Texto sobre setting e privacidade">
 
-            <div class="row">
-              <a class="btn" href="/biblioteca/file/{{ it.id }}">Baixar/abrir</a>
+      <label>Notas</label>
+      <textarea name="notes" rows="4" placeholder="Resumo, insights, aplicação clínica..."></textarea>
 
-              <form method="post" action="/biblioteca/delete" onsubmit="return confirm('Remover este item?');">
-                <input type="hidden" name="item_id" value="{{ it.id }}">
-                <button class="danger" type="submit">Apagar</button>
-              </form>
-            </div>
+      <label>Arquivo (PDF)</label>
+      <input type="file" name="file" accept="application/pdf" required>
+
+      <button type="submit">Enviar</button>
+    </form>
+
+    <hr>
+
+    <h3 style="margin:0 0 8px;">Itens (uploads)</h3>
+    {% if items|length == 0 %}
+      <p class="muted">Sem arquivos ainda.</p>
+    {% else %}
+      {% for it in items %}
+        <div class="item">
+          <div class="itemhead">
+            <strong>{{ it.title }}</strong>
+            <span class="muted">{{ it.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
           </div>
-        {% endfor %}
-      {% endif %}
-    </div>
+
+          <div class="row" style="margin-top:8px;">
+            <a class="btn" href="/biblioteca/open/{{ it.id }}" target="_blank">Abrir PDF</a>
+
+            <form method="post" action="/biblioteca/delete" onsubmit="return confirm('Apagar este item?');" style="margin:0;">
+              <input type="hidden" name="item_id" value="{{ it.id }}">
+              <button class="danger" type="submit">Apagar</button>
+            </form>
+          </div>
+
+          {% if it.notes %}
+            <pre class="pre" style="margin-top:10px;">{{ it.notes }}</pre>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
   </div>
+
+</div>
+
 {% endblock %}
