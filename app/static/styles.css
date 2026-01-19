@@ -18,7 +18,15 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: var(--bg);
+
+  /* 🎨 FUNDO COM GRADIENTE CLÍNICO SUAVE */
+  background: linear-gradient(
+    135deg,
+    #fdf6f9 0%,
+    #ffffff 50%,
+    #f7f2f4 100%
+  );
+
   color: var(--text);
 }
 
@@ -237,6 +245,7 @@ details summary {
   .grid, .grid2 { grid-template-columns: 1fr; }
   .nav { display: none; }
 }
+
 /* Modo Sigilo */
 .privacy-blur main,
 .privacy-blur header,
@@ -275,6 +284,7 @@ details summary {
 }
 
 .dark-mode a { color: var(--accent) !important; }
+
 /* =========================
    Onboarding (Home)
    ========================= */
@@ -282,7 +292,7 @@ details summary {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.35);
-  display: none;              /* o JS liga quando precisa */
+  display: none;
   align-items: center;
   justify-content: center;
   padding: 16px;
@@ -320,8 +330,6 @@ details summary {
   cursor: pointer;
   opacity: .7;
   color: var(--muted);
-  padding: 0;
-  margin: 0;
 }
 
 .ob-close:hover{ opacity: 1; }
@@ -333,12 +341,10 @@ details summary {
 
 .ob-steps{
   margin: 10px 0 12px 18px;
-  padding: 0;
 }
 
 .ob-steps li{
   margin: 10px 0;
-  color: var(--text);
 }
 
 .ob-steps strong{
@@ -353,12 +359,6 @@ details summary {
   gap: 10px;
   margin-top: 10px;
   color: var(--muted);
-  user-select: none;
-}
-
-.ob-check input{
-  width: auto;
-  margin: 0;
 }
 
 .ob-actions{
