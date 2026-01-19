@@ -52,15 +52,20 @@
   </div>
 </div>
 
-<div class="card tip">
-  <h3>O que o Setting propõe</h3>
+<!-- Seção destacada (mais separada e institucional) -->
+<section class="section-highlight">
+  <h2>O que o Setting propõe</h2>
+  <p class="muted" style="margin-top:-4px; margin-bottom:14px;">
+    Princípios que orientam o desenvolvimento do Setting e o cuidado com a prática clínica digital.
+  </p>
+
   <ul>
     <li>Sustentar o setting clínico no ambiente digital.</li>
     <li>Apoiar a organização do trabalho psicoterapêutico on-line.</li>
     <li>Facilitar decisões éticas e práticas no uso de tecnologias.</li>
     <li>Respeitar diferentes abordagens teóricas da Psicologia.</li>
   </ul>
-</div>
+</section>
 
 <!-- ================= ONBOARDING ================= -->
 
@@ -127,19 +132,16 @@
   document.addEventListener("DOMContentLoaded", function () {
     const overlay = document.getElementById("onboardingOverlay");
 
-    // Mostra apenas se ainda não foi marcado
     if (!localStorage.getItem(ONBOARDING_KEY)) {
       setTimeout(showOnboarding, 250);
     }
 
-    // Fecha ao clicar fora do modal (no fundo escuro)
     if (overlay) {
       overlay.addEventListener("click", function (e) {
         if (e.target === overlay) closeOnboarding(false);
       });
     }
 
-    // Fecha com tecla ESC
     document.addEventListener("keydown", function (e) {
       const isOpen = overlay && overlay.style.display === "flex";
       if (isOpen && e.key === "Escape") closeOnboarding(false);
