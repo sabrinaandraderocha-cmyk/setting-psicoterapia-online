@@ -65,10 +65,10 @@
 <!-- ================= ONBOARDING ================= -->
 
 <div id="onboardingOverlay" class="ob-overlay" aria-hidden="true">
-  <div class="ob-modal" role="dialog" aria-modal="true">
+  <div class="ob-modal" role="dialog" aria-modal="true" aria-labelledby="obTitle">
     <div class="ob-header">
-      <h2>Boas-vindas ao Setting</h2>
-      <button type="button" class="ob-close" onclick="closeOnboarding()">×</button>
+      <h2 id="obTitle">Boas-vindas ao Setting</h2>
+      <button type="button" class="ob-close" aria-label="Fechar" onclick="closeOnboarding(false)">×</button>
     </div>
 
     <div class="ob-body">
@@ -95,7 +95,7 @@
     </div>
 
     <div class="ob-actions">
-      <button class="btn" onclick="closeOnboarding()">Começar</button>
+      <button class="btn" onclick="closeOnboarding(true)">Começar</button>
     </div>
   </div>
 </div>
@@ -105,26 +105,45 @@
 
   function showOnboarding() {
     const overlay = document.getElementById("onboardingOverlay");
+    if (!overlay) return;
     overlay.style.display = "flex";
     overlay.setAttribute("aria-hidden", "false");
   }
 
-  function closeOnboarding() {
+  function closeOnboarding(saveChoice = true) {
     const overlay = document.getElementById("onboardingOverlay");
     const checkbox = document.getElementById("dontShowOnboarding");
 
-    if (checkbox && checkbox.checked) {
+    if (saveChoice && checkbox && checkbox.checked) {
       localStorage.setItem(ONBOARDING_KEY, "true");
     }
 
-    overlay.style.display = "none";
-    overlay.setAttribute("aria-hidden", "true");
+    if (overlay) {
+      overlay.style.display = "none";
+      overlay.setAttribute("aria-hidden", "true");
+    }
   }
 
   document.addEventListener("DOMContentLoaded", function () {
+    const overlay = document.getElementById("onboardingOverlay");
+
+    // Mostra apenas se ainda não foi marcado
     if (!localStorage.getItem(ONBOARDING_KEY)) {
-      setTimeout(showOnboarding, 300);
+      setTimeout(showOnboarding, 250);
     }
+
+    // Fecha ao clicar fora do modal (no fundo escuro)
+    if (overlay) {
+      overlay.addEventListener("click", function (e) {
+        if (e.target === overlay) closeOnboarding(false);
+      });
+    }
+
+    // Fecha com tecla ESC
+    document.addEventListener("keydown", function (e) {
+      const isOpen = overlay && overlay.style.display === "flex";
+      if (isOpen && e.key === "Escape") closeOnboarding(false);
+    });
   });
 </script>
 
