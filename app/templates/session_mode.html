@@ -26,15 +26,13 @@
         <input name="patient_alias" placeholder="Ex.: P01, CasoTCC, AcompanhamentoA">
 
         <label>Conteúdo (mínimo necessário)</label>
-        <textarea name="content" rows="10" required
-          placeholder="Data: (automática)
-Foco da sessão (1 linha):
-Intervenções realizadas (conforme sua abordagem):
-Combinados/limites do setting:
-Encaminhamentos / próximos passos:
-Observação ética: sem dados identificáveis, sem detalhes desnecessários do caso."></textarea>
+        <textarea id="sessionContent" name="content" rows="12" required
+          placeholder="Utilize o modelo sugerido ou escreva livremente, mantendo o mínimo necessário."></textarea>
 
-        <button type="submit">Salvar registro</button>
+        <div class="row" style="margin-top:10px;">
+          <button type="button" class="btn" onclick="insertTemplate()">Inserir modelo de registro</button>
+          <button type="submit">Salvar registro</button>
+        </div>
       </form>
 
       <hr>
@@ -108,4 +106,34 @@ Observação ética: sem dados identificáveis, sem detalhes desnecessários do 
       {% endif %}
     </div>
   </div>
+
+  <script>
+    function insertTemplate() {
+      const textarea = document.getElementById("sessionContent");
+      if (!textarea) return;
+
+      if (textarea.value.trim() !== "") {
+        const ok = confirm("Deseja substituir o conteúdo atual pelo modelo sugerido?");
+        if (!ok) return;
+      }
+
+      textarea.value =
+`Data: (automática)
+
+Foco da sessão (1 linha):
+- 
+
+Intervenções realizadas (conforme sua abordagem):
+- 
+
+Combinados/limites do setting:
+- 
+
+Encaminhamentos / próximos passos:
+- 
+
+Observação ética:
+- Registro mínimo necessário, sem dados identificáveis ou narrativa detalhada do caso.`;
+    }
+  </script>
 {% endblock %}
