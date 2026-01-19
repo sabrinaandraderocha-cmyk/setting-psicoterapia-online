@@ -275,3 +275,95 @@ details summary {
 }
 
 .dark-mode a { color: var(--accent) !important; }
+/* =========================
+   Onboarding (Home)
+   ========================= */
+.ob-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  display: none;              /* o JS liga quando precisa */
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 9999;
+}
+
+.ob-modal{
+  width: min(720px, 100%);
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e6cfd8;
+  box-shadow: 0 12px 40px rgba(0,0,0,.18);
+  overflow: hidden;
+}
+
+.ob-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 18px 10px 18px;
+}
+
+.ob-header h2{
+  margin: 0;
+  font-size: 20px;
+  color: var(--accent-dark);
+}
+
+.ob-close{
+  border: none;
+  background: transparent;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: .7;
+  color: var(--muted);
+  padding: 0;
+  margin: 0;
+}
+
+.ob-close:hover{ opacity: 1; }
+
+.ob-body{
+  padding: 0 18px 12px 18px;
+  color: var(--text);
+}
+
+.ob-steps{
+  margin: 10px 0 12px 18px;
+  padding: 0;
+}
+
+.ob-steps li{
+  margin: 10px 0;
+  color: var(--text);
+}
+
+.ob-steps strong{
+  display: block;
+  margin-bottom: 4px;
+  color: var(--accent-dark);
+}
+
+.ob-check{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: var(--muted);
+  user-select: none;
+}
+
+.ob-check input{
+  width: auto;
+  margin: 0;
+}
+
+.ob-actions{
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 18px 18px 18px;
+  border-top: 1px solid #ead5dd;
+}
