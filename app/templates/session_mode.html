@@ -6,40 +6,33 @@
     Use códigos ou apelidos. Evite dados pessoais identificáveis e registre apenas o mínimo necessário.
   </p>
 
+  <p class="muted" style="font-size:13px;">
+    Orientação: registre principalmente <strong>suas intervenções e condutas clínicas</strong>, de acordo com a sua abordagem,
+    sem detalhar a história do caso. Priorize o que sustenta continuidade do processo (hipóteses, foco, combinados e encaminhamentos).
+  </p>
+
   <div class="grid2">
     <div class="card">
-      <h2>Registro de sessão (mínimo necessário)</h2>
+      <h2>Registro de sessão</h2>
       <p class="muted" style="margin-top:-6px;">
-        Sugestão: foco, intervenções centrais, combinados e encaminhamentos (sem identificação).
+        Um único registro por sessão, com data automática. Foque na sua prática clínica, não na narrativa detalhada do caso.
       </p>
 
       <form method="post" action="/modo-sessao/add">
-        <label>Etapa</label>
-        <select name="stage" required>
-          <option value="pre">Pré-sessão</option>
-          <option value="during">Durante a sessão</option>
-          <option value="post">Pós-sessão</option>
-        </select>
-        <label class="row" style="margin-top:10px;">
-  <input type="checkbox" name="is_supervision">
-  <span>Registro para supervisão</span>
-</label>
-
-<p class="muted" style="font-size:12px; margin-top:4px;">
-  Utilize este marcador para reflexões, discussões e elaborações em supervisão,
-  preservando o anonimato e o mínimo necessário.
-</p>
+        <!-- Mantém compatibilidade com o backend (sem mostrar pré/durante/pós) -->
+        <input type="hidden" name="stage" value="during">
 
         <label>Paciente (código ou apelido)</label>
-        <input name="patient_alias" placeholder="Ex.: P01, CasoTCC, SupervisãoA">
+        <input name="patient_alias" placeholder="Ex.: P01, CasoTCC, AcompanhamentoA">
 
-        <label>Conteúdo</label>
-        <textarea name="content" rows="8" required
-          placeholder="Foco da sessão:
-Intervenções centrais:
-Combinados:
-Encaminhamentos:
-(sem dados identificáveis)"></textarea>
+        <label>Conteúdo (mínimo necessário)</label>
+        <textarea name="content" rows="10" required
+          placeholder="Data: (automática)
+Foco da sessão (1 linha):
+Intervenções realizadas (conforme sua abordagem):
+Combinados/limites do setting:
+Encaminhamentos / próximos passos:
+Observação ética: sem dados identificáveis, sem detalhes desnecessários do caso."></textarea>
 
         <button type="submit">Salvar registro</button>
       </form>
@@ -78,9 +71,7 @@ Encaminhamentos:
             {% for n in group.list %}
               <div class="item" style="border-top:none;">
                 <div class="itemhead">
-                  <strong>
-                    {% if n.stage == "pre" %}Pré{% elif n.stage == "during" %}Durante{% else %}Pós{% endif %}
-                  </strong>
+                  <strong>Registro</strong>
                   <span class="muted">{{ n.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
                 </div>
 
@@ -92,18 +83,14 @@ Encaminhamentos:
                   <form method="post" action="/modo-sessao/update">
                     <input type="hidden" name="note_id" value="{{ n.id }}">
 
-                    <label>Etapa</label>
-                    <select name="stage" required>
-                      <option value="pre" {% if n.stage == "pre" %}selected{% endif %}>Pré-sessão</option>
-                      <option value="during" {% if n.stage == "during" %}selected{% endif %}>Durante a sessão</option>
-                      <option value="post" {% if n.stage == "post" %}selected{% endif %}>Pós-sessão</option>
-                    </select>
+                    <!-- Mantém compatibilidade com o backend (sem mostrar pré/durante/pós) -->
+                    <input type="hidden" name="stage" value="during">
 
                     <label>Paciente (código ou apelido)</label>
                     <input name="patient_alias" value="{{ n.patient_alias }}">
 
-                    <label>Conteúdo</label>
-                    <textarea name="content" rows="8" required>{{ n.content }}</textarea>
+                    <label>Conteúdo (mínimo necessário)</label>
+                    <textarea name="content" rows="10" required>{{ n.content }}</textarea>
 
                     <button type="submit">Salvar alterações</button>
                   </form>
