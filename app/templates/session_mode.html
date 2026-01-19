@@ -3,57 +3,66 @@
   <h1>Modo Sessão</h1>
 
   <p class="muted">
-    Use apelidos ou códigos. Não insira dados pessoais identificáveis.
+    Use códigos ou apelidos. Evite dados pessoais identificáveis e registre apenas o mínimo necessário.
   </p>
 
   <div class="grid2">
     <div class="card">
-      <h2>Adicionar nota</h2>
+      <h2>Registro de sessão (mínimo necessário)</h2>
+      <p class="muted" style="margin-top:-6px;">
+        Sugestão: foco, intervenções centrais, combinados e encaminhamentos (sem identificação).
+      </p>
+
       <form method="post" action="/modo-sessao/add">
         <label>Etapa</label>
         <select name="stage" required>
           <option value="pre">Pré-sessão</option>
-          <option value="during">Durante</option>
+          <option value="during">Durante a sessão</option>
           <option value="post">Pós-sessão</option>
         </select>
 
-        <label>Paciente (apelido)</label>
-        <input name="patient_alias" placeholder="ex.: P01, Caso TCC, Caso histórico">
+        <label>Paciente (código ou apelido)</label>
+        <input name="patient_alias" placeholder="Ex.: P01, CasoTCC, SupervisãoA">
 
         <label>Conteúdo</label>
-        <textarea name="content" rows="6" placeholder="Checklist rápido, foco, intervenção, plano..." required></textarea>
+        <textarea name="content" rows="8" required
+          placeholder="Foco da sessão:
+Intervenções centrais:
+Combinados:
+Encaminhamentos:
+(sem dados identificáveis)"></textarea>
 
-        <button type="submit">Salvar</button>
+        <button type="submit">Salvar registro</button>
       </form>
 
       <hr>
 
       <h2>Filtro</h2>
       <form method="get" action="/modo-sessao">
-        <label>Filtrar por paciente/apelido</label>
+        <label>Filtrar por paciente/código</label>
         <select name="patient">
           <option value="" {% if not selected_patient %}selected{% endif %}>Todos</option>
           {% for p in patients %}
             <option value="{{ p }}" {% if selected_patient == p %}selected{% endif %}>{{ p }}</option>
           {% endfor %}
         </select>
-        <button type="submit">Aplicar filtro</button>
+        <button type="submit">Filtrar</button>
       </form>
     </div>
 
     <div class="card">
-      <h2>Últimas notas</h2>
+      <h2>Registros recentes</h2>
 
       {% if notes|length == 0 %}
-        <p class="muted">Sem notas ainda.</p>
+        <p class="muted">Sem registros ainda.</p>
       {% else %}
 
-        {# Agrupamento por paciente/apelido #}
+        {# Agrupamento por paciente/código #}
         {% for group in notes|groupby('patient_alias') %}
           <div class="item">
             <div class="itemhead">
               <strong>
-                Paciente: {% if group.grouper %}{{ group.grouper }}{% else %}Sem apelido{% endif %}
+                Paciente: {% if group.grouper %}{{ group.grouper }}{% else %}Sem código{% endif %}
               </strong>
             </div>
 
@@ -77,21 +86,21 @@
                     <label>Etapa</label>
                     <select name="stage" required>
                       <option value="pre" {% if n.stage == "pre" %}selected{% endif %}>Pré-sessão</option>
-                      <option value="during" {% if n.stage == "during" %}selected{% endif %}>Durante</option>
+                      <option value="during" {% if n.stage == "during" %}selected{% endif %}>Durante a sessão</option>
                       <option value="post" {% if n.stage == "post" %}selected{% endif %}>Pós-sessão</option>
                     </select>
 
-                    <label>Paciente (apelido)</label>
+                    <label>Paciente (código ou apelido)</label>
                     <input name="patient_alias" value="{{ n.patient_alias }}">
 
                     <label>Conteúdo</label>
-                    <textarea name="content" rows="6" required>{{ n.content }}</textarea>
+                    <textarea name="content" rows="8" required>{{ n.content }}</textarea>
 
                     <button type="submit">Salvar alterações</button>
                   </form>
                 </details>
 
-                <form method="post" action="/modo-sessao/delete" onsubmit="return confirm('Apagar esta nota?');">
+                <form method="post" action="/modo-sessao/delete" onsubmit="return confirm('Apagar este registro?');">
                   <input type="hidden" name="note_id" value="{{ n.id }}">
                   <button class="danger" type="submit">Apagar</button>
                 </form>
