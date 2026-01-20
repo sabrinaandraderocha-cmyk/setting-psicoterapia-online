@@ -11,6 +11,13 @@
     sem detalhar a história do caso. Priorize o que sustenta continuidade do processo (foco, intervenções, combinados e encaminhamentos).
   </p>
 
+  <p class="muted" style="font-size:13px;">
+    Registro orientado pela abordagem: utilize este espaço para anotar suas
+    <strong>intervenções, decisões clínicas e encaminhamentos</strong>, conforme sua abordagem teórica,
+    evitando dados identificáveis. Se desejar, você pode <strong>baixar o registro em .txt</strong>
+    e armazená-lo localmente.
+  </p>
+
   <div class="grid2">
     <div class="card">
       <h2>Registro de sessão</h2>
@@ -33,6 +40,9 @@
           <button type="button" class="btn" onclick="insertTemplateHumanista()">Modelo humanista</button>
           <button type="button" class="btn" onclick="insertTemplateTCC()">Modelo TCC</button>
           <button type="button" class="btn" onclick="insertTemplatePsicanalise()">Modelo psicanálise</button>
+
+          <button type="button" class="btn" onclick="downloadTxt()">Baixar .txt</button>
+
           <button type="submit">Salvar registro</button>
         </div>
       </form>
@@ -223,6 +233,33 @@ Indicações de continuidade (próximos passos / encaminhamentos):
 
 Observação ética:
 - Mínimo necessário, sem dados identificáveis e sem narrativa detalhada do caso.`;
+    }
+
+    function downloadTxt() {
+      const textarea = document.getElementById("sessionContent");
+      if (!textarea || !textarea.value.trim()) {
+        alert("Não há conteúdo para baixar.");
+        return;
+      }
+
+      const blob = new Blob([textarea.value], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+
+      a.download = `registro_sessao_${yyyy}-${mm}-${dd}.txt`;
+
+      document.body.appendChild(a);
+      a.click();
+
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
   </script>
 {% endblock %}
