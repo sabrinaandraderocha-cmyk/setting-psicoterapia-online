@@ -1,13 +1,17 @@
 :root {
   --bg: #ffffff;
-  --card: #f9fafb;
+
+  /* Base mais neutra (menos rosa) */
+  --card: #fbfbfc;
   --text: #1f2933;
   --muted: #6b7280;
 
-  /* Rosa neutro clínico */
-  --accent: #c58aa0;
-  --accent-dark: #a96b82;
-  --accent-soft: #f6e9ee;
+  /* Acento clínico discreto (rosa queimado) */
+  --accent: #b98398;
+  --accent-dark: #9e6b80;
+
+  /* Barra superior e fundos suaves (neutros) */
+  --accent-soft: #f4f5f7;
 
   --danger: #c53030;
   --border: #e5e7eb;
@@ -19,12 +23,11 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 
-  /* 🎨 FUNDO COM GRADIENTE CLÍNICO SUAVE */
+  /* Fundo neutro (menos rosa) */
   background: linear-gradient(
-    135deg,
-    #fdf6f9 0%,
-    #ffffff 50%,
-    #f7f2f4 100%
+    180deg,
+    #ffffff 0%,
+    #fafafa 100%
   );
 
   color: var(--text);
@@ -54,7 +57,7 @@ a:hover {
   justify-content: space-between;
   padding: 14px 16px;
   background: var(--accent-soft);
-  border-bottom: 1px solid #e6cfd8;
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
 }
@@ -108,10 +111,10 @@ h2 {
 /* Cards */
 .card {
   background: var(--card);
-  border: 1px solid #e6cfd8;
+  border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
 
   /* ✅ Alinha botões no fundo do card */
   display: flex;
@@ -125,20 +128,20 @@ h2 {
 }
 
 .card.tip {
-  border-color: var(--accent);
-  background: #fdf6f9;
+  border-color: rgba(185, 131, 152, 0.35);
+  background: #ffffff;
 }
 
 .card.error {
   border-color: #c53030;
 }
 
-/* ✅ Seção destacada (Home) */
+/* ✅ Seção destacada (Home) – menos rosa */
 .section-highlight{
-  margin-top: 36px;
-  padding: 22px 26px;
-  background: #fdf6f9;
-  border: 1px solid #ead5dd;
+  margin-top: 40px;
+  padding: 24px 28px;
+  background: #ffffff;
+  border: 1px solid var(--border);
   border-radius: 18px;
 }
 
@@ -161,7 +164,7 @@ h2 {
 
 /* Itens internos */
 .item {
-  border-top: 1px solid #ead5dd;
+  border-top: 1px solid var(--border);
   padding-top: 12px;
   margin-top: 12px;
 }
@@ -177,7 +180,7 @@ h2 {
 .tag {
   display: inline-block;
   padding: 4px 10px;
-  border: 1px solid #e3c3cf;
+  border: 1px solid rgba(185, 131, 152, 0.35);
   border-radius: 999px;
   color: var(--muted);
   margin: 8px 6px 0 0;
@@ -222,8 +225,8 @@ button,
   color: #ffffff;
   border: none;
   border-radius: 12px;
-  padding: 10px 14px;
-  font-weight: 700;
+  padding: 10px 16px;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -239,8 +242,8 @@ button.danger {
 
 /* Blocos de texto */
 .pre {
-  background: var(--card);
-  border: 1px solid #e6cfd8;
+  background: #ffffff;
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 10px;
   white-space: pre-wrap;
@@ -267,7 +270,7 @@ button.danger {
 
 hr {
   border: none;
-  border-top: 1px solid #ead5dd;
+  border-top: 1px solid var(--border);
   margin: 14px 0;
 }
 
@@ -319,7 +322,7 @@ details summary {
   border-color: #1f2937 !important;
 }
 
-.dark-mode a { color: var(--accent) !important; }
+.dark-mode a { color: #d8a1b6 !important; }
 
 /* =========================
    Onboarding (Home)
@@ -339,7 +342,7 @@ details summary {
   width: min(720px, 100%);
   background: #ffffff;
   border-radius: 18px;
-  border: 1px solid #e6cfd8;
+  border: 1px solid var(--border);
   box-shadow: 0 12px 40px rgba(0,0,0,.18);
   overflow: hidden;
 }
@@ -401,5 +404,5 @@ details summary {
   display: flex;
   justify-content: flex-end;
   padding: 14px 18px 18px 18px;
-  border-top: 1px solid #ead5dd;
+  border-top: 1px solid var(--border);
 }
