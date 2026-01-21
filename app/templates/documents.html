@@ -36,6 +36,7 @@
 
 <div class="grid2">
 
+  <!-- Coluna esquerda: criação + variáveis -->
   <div class="card">
     <h2>Criar novo modelo</h2>
 
@@ -63,15 +64,70 @@
     </div>
   </div>
 
+  <!-- Coluna direita: lista de modelos -->
   <div class="card">
     <h2>Modelos</h2>
 
     {% if docs and (docs|length > 0) %}
       <div class="muted" style="margin:8px 0 12px;">
-        Dica: clique em <strong>Editar</strong> para abrir/fechar o modelo, salvar alterações e gerar texto preenchido.
+        Dica: use <strong>Gerar texto</strong> para abrir o formulário de preenchimento.
+        Use <strong>Abrir/Editar</strong> para ajustar o corpo do modelo.
       </div>
 
+      {# classificação simples por nome (sem backend): modelos "base" #}
+      {% set base_docs = [] %}
+      {% set user_docs = [] %}
+
       {% for d in docs %}
+        {% set n = (d.name or '')|lower %}
+        {% if ('atestado' in n) or ('declara' in n) or ('consent' in n) or ('combinad' in n) %}
+          {% set _ = base_docs.append(d) %}
+        {% else %}
+          {% set _ = user_docs.append(d) %}
+        {% endif %}
+      {% endfor %}
+
+      <!-- Modelos base -->
+      <div class="card tip" style="margin-bottom:12px;">
+        <div class="row" style="justify-content:space-between; align-items:center;">
+          <h3 style="margin:0;">Modelos CFP (base)</h3>
+          <div class="tag">recomendados</div>
+        </div>
+        <p class="muted" style="margin:8px 0 0; font-size:12px;">
+          Modelos iniciais para uso profissional. Você pode editar e adaptar conforme sua prática, respeitando o sigilo e o mínimo necessário.
+        </p>
+      </div>
+
+      {% if base_docs|length == 0 %}
+        <p class="muted">Sem modelos base identificados.</p>
+      {% else %}
+        {% for d in base_docs %}
+          {{ self.render_doc_item(d, is_base=True) }}
+        {% endfor %}
+      {% endif %}
+
+      <hr>
+
+      <!-- Meus modelos -->
+      <div class="card" style="margin-bottom:12px;">
+        <div class="row" style="justify-content:space-between; align-items:center;">
+          <h3 style="margin:0;">Meus modelos</h3>
+          <div class="tag">personalizados</div>
+        </div>
+        <p class="muted" style="margin:8px 0 0; font-size:12px;">
+          Modelos criados/ajustados por você para sua prática.
+        </p>
+      </div>
+
+      {% if user_docs|length == 0 %}
+        <p class="muted">Você ainda não criou modelos personalizados.</p>
+      {% else %}
+        {% for d in user_docs %}
+          {{ self.render_doc_item(d, is_base=False) }}
+        {% endfor %}
+      {% endif %}
+
+      {% macro render_doc_item(d, is_base=False) %}
         <div class="item">
           <div class="itemhead">
             <strong>{{ d.name }}</strong>
@@ -85,7 +141,12 @@
           </div>
 
           <div class="row" style="margin-top:8px; gap:10px;">
-            <button type="button" class="btn" onclick="toggleEdit('{{ d.id }}')">Editar</button>
+            <button type="button" class="btn" onclick="toggleEdit('{{ d.id }}')">Abrir/Editar</button>
+            <button type="button" class="btn" onclick="toggleRender('{{ d.id }}')">Gerar texto</button>
+
+            {% if is_base %}
+              <span class="tag">base</span>
+            {% endif %}
 
             <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este modelo?');">
               <input type="hidden" name="doc_id" value="{{ d.id }}">
@@ -93,6 +154,7 @@
             </form>
           </div>
 
+          <!-- Editar -->
           <div id="edit-{{ d.id }}" style="display:none; margin-top:10px;">
             <form method="post" action="/documentos/update" class="subform">
               <input type="hidden" name="doc_id" value="{{ d.id }}">
@@ -105,9 +167,10 @@
 
               <button type="submit">Salvar alterações</button>
             </form>
+          </div>
 
-            <hr>
-
+          <!-- Gerar texto -->
+          <div id="render-{{ d.id }}" style="display:none; margin-top:10px;">
             <form method="post" action="/documentos/render" target="_blank" class="subform">
               <input type="hidden" name="doc_id" value="{{ d.id }}">
 
@@ -137,13 +200,23 @@
 
               <button type="submit">Gerar texto preenchido</button>
             </form>
+
+            <p class="muted" style="font-size:12px; margin-top:8px;">
+              Dica: ao abrir o texto gerado, copie e cole no Word/Docs. Se quiser, você também pode salvar como .txt.
+            </p>
           </div>
         </div>
-      {% endfor %}
+      {% endmacro %}
 
       <script>
         function toggleEdit(id) {
           const el = document.getElementById('edit-' + id);
+          if (!el) return;
+          el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+        }
+
+        function toggleRender(id) {
+          const el = document.getElementById('render-' + id);
           if (!el) return;
           el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
         }
