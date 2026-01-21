@@ -1,18 +1,16 @@
 :root {
   --bg: #ffffff;
 
-  /* Base mais neutra (menos rosa) */
+  /* Base neutra */
   --card: #fbfbfc;
   --text: #1f2933;
   --muted: #6b7280;
 
-  /* Acento clínico discreto (rosa queimado) */
+  /* Acento clínico discreto */
   --accent: #b98398;
   --accent-dark: #9e6b80;
 
-  /* Barra superior e fundos suaves (neutros) */
   --accent-soft: #f4f5f7;
-
   --danger: #c53030;
   --border: #e5e7eb;
 }
@@ -78,7 +76,7 @@ h1 {
 }
 
 h2 {
-  font-size: 18px;
+  font-size: 19px;
   margin: 0 0 10px;
   color: var(--accent-dark);
 }
@@ -91,14 +89,14 @@ h2 {
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
   margin-top: 16px;
 }
 
 .grid2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
   margin-top: 16px;
   align-items: start;
 }
@@ -110,14 +108,14 @@ h2 {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 16px;
+  padding: 20px 22px;
   box-shadow: 0 8px 24px rgba(0,0,0,.06);
   display: flex;
   flex-direction: column;
 }
 
 .card .btn {
-  margin-top: auto;
+  margin-top: 16px;
   align-self: flex-start;
 }
 
@@ -134,33 +132,44 @@ h2 {
    Cards editoriais (Normas)
    ========================= */
 .card.editorial {
-  min-height: 420px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
 }
 
 .card.editorial h2 {
-  margin-bottom: 8px;
+  font-size: 20px;
+  line-height: 1.35;
 }
 
 .card.editorial .content {
-  flex: 1;
+  display: block;
 }
 
-/* Tipografia base (vai ser refinada mais abaixo) */
 .card.editorial p {
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: 15.5px;
+  line-height: 1.7;
+  margin: 0;
 }
 
 .card.editorial ul {
   padding-left: 18px;
-  margin: 6px 0 0;
+  margin: 8px 0 0;
 }
 
 .card.editorial li {
-  margin: 6px 0;
-  line-height: 1.6;
+  font-size: 15.5px;
+  line-height: 1.7;
+  margin: 8px 0;
+}
+
+.card.editorial strong {
+  font-weight: 600;
+  color: var(--accent-dark);
+}
+
+.card.editorial p.muted {
+  font-size: 14.5px;
 }
 
 /* =========================
@@ -254,7 +263,7 @@ button.danger {
   background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 10px;
+  padding: 12px;
   white-space: pre-wrap;
   overflow: auto;
 }
@@ -327,31 +336,3 @@ hr {
 }
 
 .dark-mode a { color: #d8a1b6 !important; }
-
-/* =========================
-   Tipografia editorial unificada (Normas)
-   ========================= */
-.card.editorial h2 {
-  font-size: 19px;
-  line-height: 1.35;
-}
-
-.card.editorial p,
-.card.editorial ul,
-.card.editorial li {
-  font-size: 15px;
-  line-height: 1.65;
-}
-
-.card.editorial li {
-  margin: 8px 0;
-}
-
-.card.editorial strong {
-  font-weight: 600;
-  color: var(--accent-dark);
-}
-
-.card.editorial p.muted {
-  font-size: 14px;
-}
