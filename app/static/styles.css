@@ -444,3 +444,35 @@ details summary {
   margin-top: auto;
   align-self: flex-start;
 }
+
+/* =========================
+   Cards editoriais (Normas) — recomendado para equalizar melhor
+   Use:
+   <div class="card editorial">
+     <h2>...</h2>
+     <div class="content">...</div>
+     <a class="btn">...</a>
+   </div>
+   ========================= */
+.card.editorial {
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card.editorial h2 {
+  margin-bottom: 8px;
+}
+
+.card.editorial .content {
+  flex: 1;
+}
+
+.card.editorial ul {
+  padding-left: 18px;
+}
+
+.card.editorial li {
+  margin: 6px 0;
+  line-height: 1.6;
+}
