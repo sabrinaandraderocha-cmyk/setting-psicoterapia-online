@@ -147,6 +147,7 @@ h2 {
   flex: 1;
 }
 
+/* Tipografia base (vai ser refinada mais abaixo) */
 .card.editorial p {
   font-size: 14px;
   line-height: 1.55;
@@ -326,3 +327,31 @@ hr {
 }
 
 .dark-mode a { color: #d8a1b6 !important; }
+
+/* =========================
+   Tipografia editorial unificada (Normas)
+   ========================= */
+.card.editorial h2 {
+  font-size: 19px;
+  line-height: 1.35;
+}
+
+.card.editorial p,
+.card.editorial ul,
+.card.editorial li {
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.card.editorial li {
+  margin: 8px 0;
+}
+
+.card.editorial strong {
+  font-weight: 600;
+  color: var(--accent-dark);
+}
+
+.card.editorial p.muted {
+  font-size: 14px;
+}
