@@ -114,11 +114,6 @@ h2 {
   flex-direction: column;
 }
 
-.card .btn {
-  margin-top: 16px;
-  align-self: flex-start;
-}
-
 .card.tip {
   border-color: rgba(185, 131, 152, 0.35);
   background: #ffffff;
@@ -128,8 +123,21 @@ h2 {
   border-color: #c53030;
 }
 
+/* ✅ Home: força botões alinhados no fim dos cards */
+.grid .card {
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+}
+
+.grid .card .btn {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
 /* =========================
    Cards editoriais (Normas)
+   (sem min-height para evitar espaço em branco)
    ========================= */
 .card.editorial {
   display: flex;
@@ -143,7 +151,7 @@ h2 {
 }
 
 .card.editorial .content {
-  display: block;
+  display: block; /* conteúdo define altura do card */
 }
 
 .card.editorial p {
@@ -256,6 +264,17 @@ button.danger {
   background: var(--danger);
 }
 
+/* Botão secundário (para Código de Ética) */
+.btn.secondary {
+  background: transparent;
+  color: var(--accent-dark);
+  border: 1px solid var(--border);
+}
+
+.btn.secondary:hover {
+  background: var(--accent-soft);
+}
+
 /* =========================
    Blocos de texto
    ========================= */
@@ -286,12 +305,32 @@ hr {
   margin: 14px 0;
 }
 
+details summary {
+  cursor: pointer;
+  color: var(--accent-dark);
+}
+
+/* =========================
+   Rodapé / Aviso ético
+   ========================= */
+.footer {
+  margin-top: 48px;
+  padding: 28px 0 40px;
+  background: #fafafa;
+  border-top: 1px solid var(--border);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  text-align: left;
+}
+
 /* =========================
    Responsivo
    ========================= */
 @media (max-width: 900px) {
   .grid, .grid2 { grid-template-columns: 1fr; }
   .nav { display: none; }
+  .grid .card { min-height: auto; } /* no mobile não precisa forçar altura */
 }
 
 /* =========================
@@ -336,3 +375,19 @@ hr {
 }
 
 .dark-mode a { color: #d8a1b6 !important; }
+
+.dark-mode .btn.secondary {
+  color: #d8a1b6;
+  border-color: #1f2937;
+  background: transparent;
+}
+
+.dark-mode .btn.secondary:hover {
+  background: rgba(216,161,182,0.12);
+}
+
+.dark-mode .footer {
+  background: #0b1220;
+  border-top: 1px solid #1f2937;
+  color: #9ca3af;
+}
