@@ -12,6 +12,9 @@ from .seed import seed_doc_templates  # 👈 seed inicial de modelos
 # ============================
 # Criação das tabelas
 # ============================
+
+# Criação das tabelas (RESET TEMPORÁRIO - executar uma vez)
+Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 # ============================
