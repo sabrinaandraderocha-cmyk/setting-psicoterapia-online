@@ -7,119 +7,60 @@
   </p>
 
   <p class="muted" style="font-size:13px;">
-    Orientação: registre principalmente <strong>suas intervenções e condutas clínicas</strong>, de acordo com a sua abordagem,
-    sem detalhar a história do caso. Priorize o que sustenta continuidade do processo (foco, intervenções, combinados e encaminhamentos).
-  </p>
-
-  <p class="muted" style="font-size:13px;">
-    Registro orientado pela abordagem: utilize este espaço para anotar suas
-    <strong>intervenções, decisões clínicas e encaminhamentos</strong>, conforme sua abordagem teórica,
-    evitando dados identificáveis. Se desejar, você pode <strong>baixar o registro em .txt</strong>
-    e armazená-lo localmente.
+    Este espaço é um <strong>gerador de registro mínimo</strong> orientado pela sua abordagem.
+    O Setting <strong>não armazena</strong> registros de sessão neste módulo e <strong>não substitui prontuário clínico</strong>.
+    Se desejar, você pode <strong>copiar</strong> o texto ou <strong>baixar em .txt</strong> e arquivar localmente sob sua responsabilidade.
   </p>
 
   <div class="grid2">
     <div class="card">
-      <h2>Registro de sessão</h2>
+      <h2>Registro mínimo (não armazenado)</h2>
       <p class="muted" style="margin-top:-6px;">
-        Um único registro por sessão, com data automática. Foque na sua prática clínica, não na narrativa detalhada do caso.
+        Foque nas <strong>suas intervenções e decisões clínicas</strong> (conforme sua abordagem), sem detalhar a história do caso.
       </p>
 
-      <form method="post" action="/modo-sessao/add">
-        <!-- Mantém compatibilidade com o backend (sem mostrar pré/durante/pós) -->
-        <input type="hidden" name="stage" value="during">
+      <label>Paciente (código ou apelido)</label>
+      <input id="patientAlias" placeholder="Ex.: P01, CasoTCC, AcompanhamentoA">
 
-        <label>Paciente (código ou apelido)</label>
-        <input name="patient_alias" placeholder="Ex.: P01, CasoTCC, AcompanhamentoA">
+      <label>Conteúdo (mínimo necessário)</label>
+      <textarea id="sessionContent" rows="14" required
+        placeholder="Escolha um modelo sugerido ou escreva livremente (mínimo necessário)."></textarea>
 
-        <label>Conteúdo (mínimo necessário)</label>
-        <textarea id="sessionContent" name="content" rows="12" required
-          placeholder="Escolha um modelo sugerido ou escreva livremente (mínimo necessário)."></textarea>
+      <div class="row" style="margin-top:10px;">
+        <button type="button" class="btn" onclick="insertTemplateHumanista()">Modelo humanista</button>
+        <button type="button" class="btn" onclick="insertTemplateTCC()">Modelo TCC</button>
+        <button type="button" class="btn" onclick="insertTemplatePsicanalise()">Modelo psicanálise</button>
+      </div>
 
-        <div class="row" style="margin-top:10px;">
-          <button type="button" class="btn" onclick="insertTemplateHumanista()">Modelo humanista</button>
-          <button type="button" class="btn" onclick="insertTemplateTCC()">Modelo TCC</button>
-          <button type="button" class="btn" onclick="insertTemplatePsicanalise()">Modelo psicanálise</button>
+      <div class="row" style="margin-top:10px;">
+        <button type="button" class="btn" onclick="copyText()">Copiar</button>
+        <button type="button" class="btn" onclick="downloadTxt()">Baixar .txt</button>
+        <button type="button" class="btn" onclick="clearText()">Limpar</button>
+      </div>
 
-          <button type="button" class="btn" onclick="downloadTxt()">Baixar .txt</button>
-
-          <button type="submit">Salvar registro</button>
-        </div>
-      </form>
-
-      <p class="muted" style="font-size:12px; margin-top:8px;">
-        Dica: modelos servem como guia. Ajuste os campos conforme sua abordagem e o contexto do atendimento.
+      <p class="muted" style="font-size:12px; margin-top:10px;">
+        Dica: modelos são guias. Ajuste os campos conforme sua abordagem e o contexto do atendimento.
       </p>
 
       <hr>
 
-      <h2>Filtro</h2>
-      <form method="get" action="/modo-sessao">
-        <label>Filtrar por paciente/código</label>
-        <select name="patient">
-          <option value="" {% if not selected_patient %}selected{% endif %}>Todos</option>
-          {% for p in patients %}
-            <option value="{{ p }}" {% if selected_patient == p %}selected{% endif %}>{{ p }}</option>
-          {% endfor %}
-        </select>
-        <button type="submit">Filtrar</button>
-      </form>
+      <p class="muted" style="font-size:12px;">
+        Nota ética: evite dados identificáveis e não registre conteúdo sensível desnecessário.
+        Priorize intervenções, combinados e próximos passos.
+      </p>
     </div>
 
-    <div class="card">
-      <h2>Registros recentes</h2>
-
-      {% if notes|length == 0 %}
-        <p class="muted">Sem registros ainda.</p>
-      {% else %}
-
-        {# Agrupamento por paciente/código #}
-        {% for group in notes|groupby('patient_alias') %}
-          <div class="item">
-            <div class="itemhead">
-              <strong>
-                Paciente: {% if group.grouper %}{{ group.grouper }}{% else %}Sem código{% endif %}
-              </strong>
-            </div>
-
-            {% for n in group.list %}
-              <div class="item" style="border-top:none;">
-                <div class="itemhead">
-                  <strong>Registro</strong>
-                  <span class="muted">{{ n.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
-                </div>
-
-                <pre class="pre">{{ n.content }}</pre>
-
-                <details class="subform">
-                  <summary><strong>Editar</strong></summary>
-
-                  <form method="post" action="/modo-sessao/update">
-                    <input type="hidden" name="note_id" value="{{ n.id }}">
-
-                    <!-- Mantém compatibilidade com o backend -->
-                    <input type="hidden" name="stage" value="during">
-
-                    <label>Paciente (código ou apelido)</label>
-                    <input name="patient_alias" value="{{ n.patient_alias }}">
-
-                    <label>Conteúdo (mínimo necessário)</label>
-                    <textarea name="content" rows="12" required>{{ n.content }}</textarea>
-
-                    <button type="submit">Salvar alterações</button>
-                  </form>
-                </details>
-
-                <form method="post" action="/modo-sessao/delete" onsubmit="return confirm('Apagar este registro?');">
-                  <input type="hidden" name="note_id" value="{{ n.id }}">
-                  <button class="danger" type="submit">Apagar</button>
-                </form>
-              </div>
-            {% endfor %}
-          </div>
-        {% endfor %}
-
-      {% endif %}
+    <div class="card tip">
+      <h2>Como usar (fluxo recomendado)</h2>
+      <ol style="margin:0; padding-left:18px;">
+        <li>Escolha um modelo (Humanista, TCC ou Psicanálise).</li>
+        <li>Edite apenas o essencial do ponto de vista do profissional.</li>
+        <li>Copie ou baixe o texto em <strong>.txt</strong> para arquivar localmente.</li>
+      </ol>
+      <p class="muted" style="font-size:12px; margin-top:10px;">
+        Este módulo não mantém histórico no sistema. O arquivamento é de responsabilidade do(a) profissional,
+        conforme seus critérios e as normativas aplicáveis.
+      </p>
     </div>
   </div>
 
@@ -190,7 +131,7 @@ Intervenções do(a) terapeuta (TCC):
 - Técnicas comportamentais (exposição, ativação, etc.)
 - Treino de habilidades (se aplicável)
 
-Tarefa de casa / plano entre sessões:
+Plano entre sessões:
 - 
 
 Combinados e limites do setting:
@@ -235,25 +176,60 @@ Observação ética:
 - Mínimo necessário, sem dados identificáveis e sem narrativa detalhada do caso.`;
     }
 
-    function downloadTxt() {
+    function copyText() {
       const textarea = document.getElementById("sessionContent");
       if (!textarea || !textarea.value.trim()) {
+        alert("Não há conteúdo para copiar.");
+        return;
+      }
+      textarea.select();
+      textarea.setSelectionRange(0, 999999);
+      document.execCommand("copy");
+      alert("Texto copiado.");
+    }
+
+    function clearText() {
+      const textarea = document.getElementById("sessionContent");
+      if (!textarea) return;
+      if (textarea.value.trim() && !confirm("Limpar o texto atual?")) return;
+      textarea.value = "";
+    }
+
+    function downloadTxt() {
+      const textarea = document.getElementById("sessionContent");
+      const aliasInput = document.getElementById("patientAlias");
+
+      const content = textarea ? textarea.value.trim() : "";
+      if (!content) {
         alert("Não há conteúdo para baixar.");
         return;
       }
-
-      const blob = new Blob([textarea.value], { type: "text/plain;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
 
       const now = new Date();
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, "0");
       const dd = String(now.getDate()).padStart(2, "0");
+      const hh = String(now.getHours()).padStart(2, "0");
+      const min = String(now.getMinutes()).padStart(2, "0");
 
-      a.download = `registro_sessao_${yyyy}-${mm}-${dd}.txt`;
+      const aliasRaw = aliasInput ? aliasInput.value.trim() : "";
+      const aliasSafe = aliasRaw ? aliasRaw.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 40) : "sem_codigo";
+
+      const header =
+`SETTING — REGISTRO DE SESSÃO (mínimo necessário)
+Data/hora: ${dd}/${mm}/${yyyy} ${hh}:${min}
+Paciente/código: ${aliasRaw || "—"}
+
+-------------------------
+`;
+
+      const fullText = header + content + "\n";
+      const blob = new Blob([fullText], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `registro_${aliasSafe}_${yyyy}-${mm}-${dd}.txt`;
 
       document.body.appendChild(a);
       a.click();
