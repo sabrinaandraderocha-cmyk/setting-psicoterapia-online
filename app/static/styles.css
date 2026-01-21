@@ -406,3 +406,41 @@ details summary {
   padding: 14px 18px 18px 18px;
   border-top: 1px solid var(--border);
 }
+
+/* =========================
+   Cards de Normas (mais profissionais)
+   Use: <div class="card norma"> ... </div>
+   ========================= */
+.card.norma {
+  padding: 22px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 420px;
+}
+
+.card.norma h2 {
+  font-size: 17px;
+  margin: 0 0 6px;
+}
+
+.card.norma p {
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.card.norma ul {
+  padding-left: 18px;
+  margin: 6px 0 0;
+}
+
+.card.norma li {
+  margin: 6px 0;
+  font-size: 13.5px;
+}
+
+.card.norma .btn {
+  margin-top: auto;
+  align-self: flex-start;
+}
