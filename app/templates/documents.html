@@ -74,19 +74,6 @@
         Use <strong>Abrir/Editar</strong> para ajustar o corpo do modelo.
       </div>
 
-      {# classificação simples por nome (sem backend): modelos "base" #}
-      {% set base_docs = [] %}
-      {% set user_docs = [] %}
-
-      {% for d in docs %}
-        {% set n = (d.name or '')|lower %}
-        {% if ('atestado' in n) or ('declara' in n) or ('consent' in n) or ('combinad' in n) %}
-          {% set _ = base_docs.append(d) %}
-        {% else %}
-          {% set _ = user_docs.append(d) %}
-        {% endif %}
-      {% endfor %}
-
       <!-- Modelos base -->
       <div class="card tip" style="margin-bottom:12px;">
         <div class="row" style="justify-content:space-between; align-items:center;">
@@ -98,12 +85,78 @@
         </p>
       </div>
 
-      {% if base_docs|length == 0 %}
+      {% set found_base = false %}
+      {% for d in docs %}
+        {% set n = (d.name or '')|lower %}
+        {% if ('atestado' in n) or ('declara' in n) or ('consent' in n) or ('combinad' in n) %}
+          {% set found_base = true %}
+          <div class="item">
+            <div class="itemhead">
+              <strong>{{ d.name }}</strong>
+              <span class="muted">
+                {% if d.created_at %}{{ d.created_at.strftime("%d/%m/%Y") }}{% else %}-{% endif %}
+              </span>
+            </div>
+
+            <div class="row" style="margin-top:8px; gap:10px;">
+              <button type="button" class="btn" onclick="toggleEdit('{{ d.id }}')">Abrir/Editar</button>
+              <button type="button" class="btn" onclick="toggleRender('{{ d.id }}')">Gerar texto</button>
+              <span class="tag">base</span>
+
+              <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este modelo?');">
+                <input type="hidden" name="doc_id" value="{{ d.id }}">
+                <button class="danger" type="submit">Apagar</button>
+              </form>
+            </div>
+
+            <div id="edit-{{ d.id }}" style="display:none; margin-top:10px;">
+              <form method="post" action="/documentos/update" class="subform">
+                <input type="hidden" name="doc_id" value="{{ d.id }}">
+                <label>Nome</label>
+                <input name="name" value="{{ d.name }}" required>
+                <label>Corpo</label>
+                <textarea name="body" rows="12">{{ d.body }}</textarea>
+                <button type="submit">Salvar alterações</button>
+              </form>
+            </div>
+
+            <div id="render-{{ d.id }}" style="display:none; margin-top:10px;">
+              <form method="post" action="/documentos/render" target="_blank" class="subform">
+                <input type="hidden" name="doc_id" value="{{ d.id }}">
+
+                <label>Profissional</label>
+                <input name="profissional_nome" placeholder="Seu nome">
+
+                <label>CRP</label>
+                <input name="crp" placeholder="00/00000">
+
+                <label>Paciente</label>
+                <input name="paciente_nome" placeholder="Nome (se for usar)">
+
+                <label>Data</label>
+                <input name="data" placeholder="dd/mm/aaaa">
+
+                <label>Tolerância (min)</label>
+                <input name="tolerancia_min" value="10">
+
+                <label>Regras de pagamento</label>
+                <input name="pagamento_regras" placeholder="ex.: Pix até 24h antes">
+
+                <label>Reagendamento/cancelamento</label>
+                <input name="reagendamento_regras" placeholder="ex.: até 24h antes">
+
+                <label>Janela de contato entre sessões</label>
+                <input name="janela_contato" placeholder="ex.: seg-sex 9h-18h (nao emergencias)">
+
+                <button type="submit">Gerar texto preenchido</button>
+              </form>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      {% if not found_base %}
         <p class="muted">Sem modelos base identificados.</p>
-      {% else %}
-        {% for d in base_docs %}
-          {{ self.render_doc_item(d, is_base=True) }}
-        {% endfor %}
       {% endif %}
 
       <hr>
@@ -119,94 +172,78 @@
         </p>
       </div>
 
-      {% if user_docs|length == 0 %}
+      {% set found_user = false %}
+      {% for d in docs %}
+        {% set n = (d.name or '')|lower %}
+        {% if not (('atestado' in n) or ('declara' in n) or ('consent' in n) or ('combinad' in n)) %}
+          {% set found_user = true %}
+          <div class="item">
+            <div class="itemhead">
+              <strong>{{ d.name }}</strong>
+              <span class="muted">
+                {% if d.created_at %}{{ d.created_at.strftime("%d/%m/%Y") }}{% else %}-{% endif %}
+              </span>
+            </div>
+
+            <div class="row" style="margin-top:8px; gap:10px;">
+              <button type="button" class="btn" onclick="toggleEdit('{{ d.id }}')">Abrir/Editar</button>
+              <button type="button" class="btn" onclick="toggleRender('{{ d.id }}')">Gerar texto</button>
+
+              <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este modelo?');">
+                <input type="hidden" name="doc_id" value="{{ d.id }}">
+                <button class="danger" type="submit">Apagar</button>
+              </form>
+            </div>
+
+            <div id="edit-{{ d.id }}" style="display:none; margin-top:10px;">
+              <form method="post" action="/documentos/update" class="subform">
+                <input type="hidden" name="doc_id" value="{{ d.id }}">
+                <label>Nome</label>
+                <input name="name" value="{{ d.name }}" required>
+                <label>Corpo</label>
+                <textarea name="body" rows="12">{{ d.body }}</textarea>
+                <button type="submit">Salvar alterações</button>
+              </form>
+            </div>
+
+            <div id="render-{{ d.id }}" style="display:none; margin-top:10px;">
+              <form method="post" action="/documentos/render" target="_blank" class="subform">
+                <input type="hidden" name="doc_id" value="{{ d.id }}">
+
+                <label>Profissional</label>
+                <input name="profissional_nome" placeholder="Seu nome">
+
+                <label>CRP</label>
+                <input name="crp" placeholder="00/00000">
+
+                <label>Paciente</label>
+                <input name="paciente_nome" placeholder="Nome (se for usar)">
+
+                <label>Data</label>
+                <input name="data" placeholder="dd/mm/aaaa">
+
+                <label>Tolerância (min)</label>
+                <input name="tolerancia_min" value="10">
+
+                <label>Regras de pagamento</label>
+                <input name="pagamento_regras" placeholder="ex.: Pix até 24h antes">
+
+                <label>Reagendamento/cancelamento</label>
+                <input name="reagendamento_regras" placeholder="ex.: até 24h antes">
+
+                <label>Janela de contato entre sessões</label>
+                <input name="janela_contato" placeholder="ex.: seg-sex 9h-18h (nao emergencias)">
+
+                <button type="submit">Gerar texto preenchido</button>
+              </form>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      {% if not found_user %}
         <p class="muted">Você ainda não criou modelos personalizados.</p>
-      {% else %}
-        {% for d in user_docs %}
-          {{ self.render_doc_item(d, is_base=False) }}
-        {% endfor %}
       {% endif %}
-
-      {% macro render_doc_item(d, is_base=False) %}
-        <div class="item">
-          <div class="itemhead">
-            <strong>{{ d.name }}</strong>
-            <span class="muted">
-              {% if d.created_at %}
-                {{ d.created_at.strftime("%d/%m/%Y") }}
-              {% else %}
-                -
-              {% endif %}
-            </span>
-          </div>
-
-          <div class="row" style="margin-top:8px; gap:10px;">
-            <button type="button" class="btn" onclick="toggleEdit('{{ d.id }}')">Abrir/Editar</button>
-            <button type="button" class="btn" onclick="toggleRender('{{ d.id }}')">Gerar texto</button>
-
-            {% if is_base %}
-              <span class="tag">base</span>
-            {% endif %}
-
-            <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este modelo?');">
-              <input type="hidden" name="doc_id" value="{{ d.id }}">
-              <button class="danger" type="submit">Apagar</button>
-            </form>
-          </div>
-
-          <!-- Editar -->
-          <div id="edit-{{ d.id }}" style="display:none; margin-top:10px;">
-            <form method="post" action="/documentos/update" class="subform">
-              <input type="hidden" name="doc_id" value="{{ d.id }}">
-
-              <label>Nome</label>
-              <input name="name" value="{{ d.name }}" required>
-
-              <label>Corpo</label>
-              <textarea name="body" rows="12">{{ d.body }}</textarea>
-
-              <button type="submit">Salvar alterações</button>
-            </form>
-          </div>
-
-          <!-- Gerar texto -->
-          <div id="render-{{ d.id }}" style="display:none; margin-top:10px;">
-            <form method="post" action="/documentos/render" target="_blank" class="subform">
-              <input type="hidden" name="doc_id" value="{{ d.id }}">
-
-              <label>Profissional</label>
-              <input name="profissional_nome" placeholder="Seu nome">
-
-              <label>CRP</label>
-              <input name="crp" placeholder="00/00000">
-
-              <label>Paciente</label>
-              <input name="paciente_nome" placeholder="Nome (se for usar)">
-
-              <label>Data</label>
-              <input name="data" placeholder="dd/mm/aaaa">
-
-              <label>Tolerância (min)</label>
-              <input name="tolerancia_min" value="10">
-
-              <label>Regras de pagamento</label>
-              <input name="pagamento_regras" placeholder="ex.: Pix até 24h antes">
-
-              <label>Reagendamento/cancelamento</label>
-              <input name="reagendamento_regras" placeholder="ex.: até 24h antes">
-
-              <label>Janela de contato entre sessões</label>
-              <input name="janela_contato" placeholder="ex.: seg-sex 9h-18h (nao emergencias)">
-
-              <button type="submit">Gerar texto preenchido</button>
-            </form>
-
-            <p class="muted" style="font-size:12px; margin-top:8px;">
-              Dica: ao abrir o texto gerado, copie e cole no Word/Docs. Se quiser, você também pode salvar como .txt.
-            </p>
-          </div>
-        </div>
-      {% endmacro %}
 
       <script>
         function toggleEdit(id) {
