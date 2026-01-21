@@ -7,18 +7,32 @@ from .core.config import settings
 from .core.database import Base, engine, SessionLocal
 from .routers import auth, session_mode, norms, documents, library
 from .deps import require_auth
-from .seed import seed_doc_templates  # 👈 IMPORTA O SEED
+from .seed import seed_doc_templates  # 👈 seed inicial de modelos
 
+# ============================
 # Criação das tabelas
+# ============================
 Base.metadata.create_all(bind=engine)
 
+# ============================
+# App
+# ============================
 app = FastAPI(title=settings.app_name)
 
+# ============================
 # Arquivos estáticos e templates
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+# ============================
+app.mount(
+    "/static",
+    StaticFiles(directory="app/static"),
+    name="static"
+)
+
 templates = Jinja2Templates(directory="app/templates")
 
+# ============================
 # Rotas
+# ============================
 app.include_router(auth.router)
 app.include_router(session_mode.router)
 app.include_router(norms.router)
