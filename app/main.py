@@ -9,13 +9,14 @@ from .core.config import settings
 from .core.database import Base, engine, SessionLocal
 from .routers import auth, session_mode, norms, documents, library
 
-# 👇 routers de convite + cadastro por código
+# 👇 convites + signup
 from .routers import invites, signup
+
+# 👇 NOVO: solicitar convite + admin solicitações
+from .routers import invite_requests
 
 from .deps import require_auth
 from .seed import seed_doc_templates
-
-# 👇 seed multi (cria Organization e liga admin)
 from .seed_multi import seed_org_and_admin
 
 # ============================
@@ -77,6 +78,9 @@ app.include_router(documents.router)
 app.include_router(library.router)
 app.include_router(invites.router)
 app.include_router(signup.router)
+
+# 👇 NOVO
+app.include_router(invite_requests.router)
 
 # ============================
 # HOME
