@@ -49,6 +49,19 @@ def request_invite_submit(
             {"request": request, "error": "Informe um e-mail válido."},
         )
 
+    # ✅ Anti-spam: evita várias solicitações pendentes do mesmo e-mail
+    existing = (
+        db.query(InviteRequest)
+        .filter(InviteRequest.email == email, InviteRequest.handled == False)  # noqa: E712
+        .first()
+    )
+    if existing:
+        # Mantém UX: "pedido enviado" sem criar duplicata
+        return templates.TemplateResponse(
+            "request_invite_done.html",
+            {"request": request, "email": email},
+        )
+
     db.add(InviteRequest(name=name, email=email, message=message))
     db.commit()
 
@@ -107,7 +120,10 @@ def approve_request(
     if not req:
         return RedirectResponse("/admin/solicitacoes", status_code=303)
 
-    # cria convite
+    # ✅ Se já estiver atendida, não gerar outro convite
+    if req.handled and req.invite_code:
+        return RedirectResponse("/admin/solicitacoes", status_code=303)
+
     code = generate_invite_code(10)
     expires_at = datetime.utcnow() + timedelta(days=expires_days)
 
@@ -123,7 +139,6 @@ def approve_request(
     )
     db.add(inv)
 
-    # marca solicitação como atendida
     req.handled = True
     req.handled_at = datetime.utcnow()
     req.invite_code = code
