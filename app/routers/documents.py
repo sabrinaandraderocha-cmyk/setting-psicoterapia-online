@@ -13,7 +13,6 @@ from ..models import DocTemplate
 router = APIRouter(prefix="/documentos", tags=["Documentos"])
 templates = Jinja2Templates(directory="app/templates")
 
-
 # Pasta para PDFs/TXTs gerados
 GENERATED_DIR = os.path.join(
     os.path.dirname(os.path.dirname(__file__)), "data", "generated"
@@ -146,8 +145,7 @@ def render_doc(
     db: Session = Depends(get_db),
 ):
     """
-    Gera a versão preenchida do documento (texto).
-    Renderiza uma página HTML com o texto e botão de copiar.
+    Renderiza uma página HTML com o texto preenchido (para copiar).
     """
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
@@ -185,8 +183,67 @@ def render_doc(
     )
 
 
+@router.post("/render-txt")
+def render_doc_txt(
+    request: Request,
+    doc_id: int = Form(...),
+    profissional_nome: str = Form(""),
+    crp: str = Form(""),
+    paciente_nome: str = Form(""),
+    data: str = Form(""),
+    tolerancia_min: str = Form("10"),
+    pagamento_regras: str = Form(""),
+    reagendamento_regras: str = Form(""),
+    janela_contato: str = Form(""),
+    db: Session = Depends(get_db),
+):
+    """
+    Baixa um .txt preenchido a partir de um DocTemplate (modelo criado pelo usuário).
+    """
+    if not require_auth(request):
+        return RedirectResponse(url="/login", status_code=303)
+
+    org_id = _org_id(request)
+    if not org_id:
+        return RedirectResponse(url="/logout", status_code=303)
+
+    obj = (
+        db.query(DocTemplate)
+        .filter(DocTemplate.id == doc_id, DocTemplate.organization_id == org_id)
+        .first()
+    )
+    if not obj:
+        return RedirectResponse(url="/documentos", status_code=303)
+
+    out = obj.body
+    repl = {
+        "{{PROFISSIONAL_NOME}}": profissional_nome or "__________",
+        "{{CRP}}": crp or "__________",
+        "{{PACIENTE_NOME}}": paciente_nome or "__________",
+        "{{DATA}}": data or "__________",
+        "{{TOLERANCIA_MIN}}": tolerancia_min or "10",
+        "{{PAGAMENTO_REGRAS}}": pagamento_regras or "__________",
+        "{{REAGENDAMENTO_REGRAS}}": reagendamento_regras or "__________",
+        "{{JANELA_CONTATO}}": janela_contato or "__________",
+    }
+
+    for k, v in repl.items():
+        out = out.replace(k, v)
+
+    safe_name = "".join([c if c.isalnum() or c in " _-" else "_" for c in (obj.name or "documento")]).strip()
+    safe_name = safe_name.replace(" ", "_")[:40] or "documento"
+    download_name = f"{safe_name}.txt"
+
+    filename = f"doc_{doc_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    path = os.path.join(GENERATED_DIR, filename)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(out + "\n")
+
+    return FileResponse(path, filename=download_name, media_type="text/plain; charset=utf-8")
+
+
 # ==========================
-# TXT (para edição rápida)
+# TXT (documentos prontos)
 # ==========================
 @router.post("/gerar-documento-txt")
 def gerar_documento_txt(
@@ -271,8 +328,6 @@ def gerar_documento_txt(
         f"{cidade_uf}, {data_emissao}\n\n"
         f"{profissional}\n"
         f"CRP: {crp}\n\n"
-        "----------------------------------------\n"
-        "Gerado no Setting. Emissão e conteúdo sob responsabilidade do(a) profissional.\n"
     )
 
     filename = f"documento_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
@@ -313,17 +368,6 @@ def criar_pdf_documento(
     pdf.cell(0, 7, profissional, ln=True, align="R")
     pdf.set_font("Helvetica", "", 11)
     pdf.cell(0, 7, f"CRP: {crp}", ln=True, align="R")
-
-    pdf.ln(8)
-    pdf.set_font("Helvetica", "", 9)
-    pdf.set_text_color(107, 114, 128)
-    pdf.multi_cell(
-        0,
-        5,
-        "Documento gerado no Setting. Emissão e conteúdo sob responsabilidade do(a) profissional.",
-        align="L",
-    )
-    pdf.set_text_color(0, 0, 0)
 
     filename = f"documento_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
     path = os.path.join(GENERATED_DIR, filename)
