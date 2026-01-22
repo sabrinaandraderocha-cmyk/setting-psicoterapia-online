@@ -2,10 +2,15 @@
 {% block content %}
 
 <h1>Biblioteca</h1>
+<p class="muted">
+  Espaço formativo e de apoio à prática clínica. O Setting não funciona como repositório de documentos clínicos.
+</p>
 
 <div class="grid2" style="margin-top:16px; align-items:start;">
 
-  <!-- Biblioteca base (fixa) -->
+  <!-- ===============================
+       Biblioteca base (fixa)
+       =============================== -->
   <div class="card tip">
     <div class="row" style="justify-content:space-between;">
       <h2 style="margin:0;">Biblioteca base · Setting</h2>
@@ -13,7 +18,8 @@
     </div>
 
     <p class="muted" style="margin-top:10px;">
-      Textos autorais disponibilizados como material de referência para reflexão e formação em psicoterapia on-line.
+      Textos autorais disponibilizados como material de referência para reflexão,
+      formação e pesquisa em psicoterapia on-line.
       Esta biblioteca é fixa e não depende de uploads.
     </p>
 
@@ -36,67 +42,43 @@
     </ul>
 
     <p class="muted" style="font-size:12px; margin-top:12px;">
-      Os textos acima possuem finalidade acadêmica e formativa. Não constituem protocolos clínicos e não substituem
-      formação, supervisão ou julgamento técnico-profissional.
+      Os textos acima possuem finalidade acadêmica e formativa.
+      Não constituem protocolos clínicos e não substituem formação,
+      supervisão ou julgamento técnico-profissional.
     </p>
   </div>
 
-  <!-- Biblioteca do usuário (uploads) -->
+  <!-- ===============================
+       Pesquisa acadêmica externa
+       =============================== -->
   <div class="card">
     <div class="row" style="justify-content:space-between;">
-      <h2 style="margin:0;">Biblioteca do profissional</h2>
-      <span class="tag">Uploads e notas</span>
+      <h2 style="margin:0;">Pesquisa acadêmica</h2>
+      <span class="tag">Bases científicas</span>
     </div>
 
     <p class="muted" style="margin-top:10px;">
-      Envie seus artigos (PDF) e registre notas para uso formativo e organização da prática.
-      Evite inserir dados pessoais identificáveis e mantenha o mínimo necessário.
+      Para busca de artigos científicos, revisões e produções acadêmicas,
+      utilize bases reconhecidas. O Setting não armazena artigos enviados por usuários,
+      preservando a proteção de dados e o uso ético da informação.
     </p>
 
-    <hr>
+    <div class="row" style="margin-top:12px;">
+      <a class="btn secondary" target="_blank"
+         href="https://scholar.google.com/?hl=pt-BR">
+        Pesquisar no Google Acadêmico
+      </a>
 
-    <h3 style="margin:0 0 8px;">Upload</h3>
-    <form method="post" action="/biblioteca/upload" enctype="multipart/form-data">
-      <label>Título</label>
-      <input name="title" required placeholder="Ex.: Texto sobre setting e privacidade">
+      <a class="btn secondary" target="_blank"
+         href="https://www.scielo.br/">
+        Pesquisar na SciELO
+      </a>
+    </div>
 
-      <label>Notas</label>
-      <textarea name="notes" rows="4" placeholder="Resumo, insights, aplicação clínica..."></textarea>
-
-      <label>Arquivo (PDF)</label>
-      <input type="file" name="file" accept="application/pdf" required>
-
-      <button type="submit">Enviar</button>
-    </form>
-
-    <hr>
-
-    <h3 style="margin:0 0 8px;">Itens (uploads)</h3>
-    {% if items|length == 0 %}
-      <p class="muted">Sem arquivos ainda.</p>
-    {% else %}
-      {% for it in items %}
-        <div class="item">
-          <div class="itemhead">
-            <strong>{{ it.title }}</strong>
-            <span class="muted">{{ it.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
-          </div>
-
-          <div class="row" style="margin-top:8px;">
-            <a class="btn" href="/biblioteca/open/{{ it.id }}" target="_blank">Abrir PDF</a>
-
-            <form method="post" action="/biblioteca/delete" onsubmit="return confirm('Apagar este item?');" style="margin:0;">
-              <input type="hidden" name="item_id" value="{{ it.id }}">
-              <button class="danger" type="submit">Apagar</button>
-            </form>
-          </div>
-
-          {% if it.notes %}
-            <pre class="pre" style="margin-top:10px;">{{ it.notes }}</pre>
-          {% endif %}
-        </div>
-      {% endfor %}
-    {% endif %}
+    <p class="muted" style="font-size:13px; margin-top:12px;">
+      Nota ética: a pesquisa acadêmica é incentivada por meio de bases externas.
+      Evite salvar localmente documentos com dados sensíveis ou identificáveis.
+    </p>
   </div>
 
 </div>
