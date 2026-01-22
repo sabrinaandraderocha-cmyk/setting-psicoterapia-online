@@ -69,13 +69,13 @@
     </div>
   </div>
 
-  <!-- Coluna direita: lista de documentos (não mostra card vazio) -->
+  <!-- Coluna direita -->
   <div class="card">
     <h2>Documentos</h2>
 
     {% if docs and (docs|length > 0) %}
       <div class="muted" style="margin:8px 0 12px;">
-        Dica: use <strong>Gerar texto</strong> para abrir o formulário de preenchimento.
+        Dica: use <strong>Gerar .txt</strong> para baixar o documento preenchido.
         Use <strong>Abrir/Editar</strong> para ajustar o corpo do documento.
       </div>
 
@@ -90,11 +90,9 @@
         </p>
       </div>
 
-      {% set found_base = false %}
       {% for d in docs %}
         {% set n = (d.name or '')|lower %}
         {% if ('atestado' in n) or ('declara' in n) or ('consent' in n) or ('combinad' in n) or ('contrat' in n) or ('recibo' in n) %}
-          {% set found_base = true %}
           <div class="item">
             <div class="itemhead">
               <strong>{{ d.name }}</strong>
@@ -105,7 +103,7 @@
 
             <div class="row" style="margin-top:8px; gap:10px;">
               <button type="button" class="btn" onclick="toggleEdit('{{ d.id }}')">Abrir/Editar</button>
-              <button type="button" class="btn" onclick="toggleRender('{{ d.id }}')">Gerar texto</button>
+              <button type="button" class="btn" onclick="toggleRender('{{ d.id }}')">Gerar .txt</button>
               <span class="tag">base</span>
 
               <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este documento?');">
@@ -126,7 +124,7 @@
             </div>
 
             <div id="render-{{ d.id }}" style="display:none; margin-top:10px;">
-              <form method="post" action="/documentos/render" target="_blank" class="subform">
+              <form method="post" action="/documentos/render-txt" class="subform">
                 <input type="hidden" name="doc_id" value="{{ d.id }}">
 
                 <label>Profissional</label>
@@ -153,16 +151,12 @@
                 <label>Janela de contato entre sessões</label>
                 <input name="janela_contato" placeholder="ex.: seg-sex 9h-18h (não emergências)">
 
-                <button type="submit">Gerar texto preenchido</button>
+                <button type="submit">Baixar .txt preenchido</button>
               </form>
             </div>
           </div>
         {% endif %}
       {% endfor %}
-
-      {% if not found_base %}
-        <p class="muted">Sem documentos base identificados.</p>
-      {% endif %}
 
       <hr>
 
@@ -177,11 +171,9 @@
         </p>
       </div>
 
-      {% set found_user = false %}
       {% for d in docs %}
         {% set n = (d.name or '')|lower %}
         {% if not (('atestado' in n) or ('declara' in n) or ('consent' in n) or ('combinad' in n) or ('contrat' in n) or ('recibo' in n)) %}
-          {% set found_user = true %}
           <div class="item">
             <div class="itemhead">
               <strong>{{ d.name }}</strong>
@@ -192,7 +184,7 @@
 
             <div class="row" style="margin-top:8px; gap:10px;">
               <button type="button" class="btn" onclick="toggleEdit('{{ d.id }}')">Abrir/Editar</button>
-              <button type="button" class="btn" onclick="toggleRender('{{ d.id }}')">Gerar texto</button>
+              <button type="button" class="btn" onclick="toggleRender('{{ d.id }}')">Gerar .txt</button>
 
               <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este documento?');">
                 <input type="hidden" name="doc_id" value="{{ d.id }}">
@@ -212,7 +204,7 @@
             </div>
 
             <div id="render-{{ d.id }}" style="display:none; margin-top:10px;">
-              <form method="post" action="/documentos/render" target="_blank" class="subform">
+              <form method="post" action="/documentos/render-txt" class="subform">
                 <input type="hidden" name="doc_id" value="{{ d.id }}">
 
                 <label>Profissional</label>
@@ -239,16 +231,12 @@
                 <label>Janela de contato entre sessões</label>
                 <input name="janela_contato" placeholder="ex.: seg-sex 9h-18h (não emergências)">
 
-                <button type="submit">Gerar texto preenchido</button>
+                <button type="submit">Baixar .txt preenchido</button>
               </form>
             </div>
           </div>
         {% endif %}
       {% endfor %}
-
-      {% if not found_user %}
-        <p class="muted">Você ainda não criou documentos personalizados.</p>
-      {% endif %}
 
       <script>
         function toggleEdit(id) {
