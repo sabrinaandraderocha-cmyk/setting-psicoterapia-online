@@ -1,6 +1,74 @@
 {% extends "base.html" %}
 {% block content %}
 
+<h1>Resoluções e guias</h1>
+<p class="muted">
+  Cadastre resoluções, artigos e sínteses, traduzindo normas em orientações práticas para a clínica.
+</p>
+
+<div class="grid2" style="margin-top:10px;">
+  <div class="card">
+    <h2>Novo resumo prático</h2>
+    <form method="post" action="/normas/add">
+      <label>Título</label>
+      <input name="title" required>
+
+      <label>Fonte (opcional)</label>
+      <input name="source">
+
+      <label>Resumo prático</label>
+      <textarea name="practical_summary" rows="6"></textarea>
+
+      <label>Tags</label>
+      <input name="tags">
+
+      <button type="submit">Salvar</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Resoluções cadastradas</h2>
+
+    {% if cards|length == 0 %}
+      <p class="muted">Sem registros ainda.</p>
+    {% else %}
+      {% for c in cards %}
+        <div class="item">
+          <div class="itemhead">
+            <strong>{{ c.title }}</strong>
+            <span class="muted">{{ c.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
+          </div>
+
+          {% if c.source %}
+            <div class="muted">Fonte: {{ c.source }}</div>
+          {% endif %}
+
+          {% if c.tags %}
+            <div class="tag">Tags: {{ c.tags }}</div>
+          {% endif %}
+
+          {% if c.practical_summary %}
+            <pre class="pre">{{ c.practical_summary }}</pre>
+          {% endif %}
+
+          <form method="post" action="/normas/delete"
+                onsubmit="return confirm('Apagar este registro?');">
+            <input type="hidden" name="card_id" value="{{ c.id }}">
+            <button class="danger" type="submit">Apagar</button>
+          </form>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+<hr style="margin:18px 0; border:none; border-top:1px solid #e5e7eb;">
+
+<h1>Referências rápidas</h1>
+<p class="muted" style="margin-top:-6px;">
+  Cards fixos para consulta rápida no dia a dia.
+</p>
+
 <div class="grid" style="margin-top:16px;">
 
   <!-- FIXO: Resolução CFP 09/2024 -->
@@ -24,7 +92,6 @@
       </div>
     </div>
 
-    <!-- Ações normativas -->
     <div class="row" style="margin-top:8px;">
       <a class="btn" target="_blank"
          href="https://atosoficiais.com.br/cfp/resolucao-do-exercicio-profissional-n-9-2024-regulamenta-o-exercicio-profissional-da-psicologia-mediado-por-tecnologias-digitais-da-informacao-e-da-comunicacao-tdics-em-territorio-nacional-e-revoga-as-resolucao-cfp-no-11-de-11-de-maio-de-2018-e-resolucao-cfp-no-04-de-26-de-marco-de-2020">
@@ -34,6 +101,36 @@
       <a class="btn secondary" target="_blank"
          href="https://site.cfp.org.br/wp-content/uploads/2012/07/codigo-de-etica-psicologia.pdf">
         Código de Ética (CFP)
+      </a>
+    </div>
+  </div>
+
+  <!-- FIXO: Código de Ética (resumo prático) -->
+  <div class="card editorial">
+    <h2>Código de Ética — resumo prático</h2>
+
+    <div class="content">
+      <p class="muted">
+        Guia rápido para decisões do dia a dia, com foco em sigilo, consentimento, limites e responsabilidade profissional.
+      </p>
+
+      <div class="muted" style="font-size:14px; line-height:1.6;">
+        <strong>Pontos de atenção:</strong>
+        <ul>
+          <li><strong>Sigilo é regra:</strong> evite exposição e compartilhe apenas quando estritamente necessário e justificado.</li>
+          <li><strong>Consentimento informado:</strong> clareza de finalidade, limites e combinados.</li>
+          <li><strong>Registros:</strong> mínimo necessário, finalidade clara, sem excesso de conteúdo sensível.</li>
+          <li><strong>Comunicação:</strong> alinhar canais, horários e limites (não substituir sessão).</li>
+          <li><strong>Encaminhamentos/supervisão:</strong> fazem parte do cuidado quando necessário.</li>
+          <li><strong>Documentos:</strong> linguagem objetiva, foco na finalidade e preservação do sigilo.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:8px;">
+      <a class="btn secondary" target="_blank"
+         href="https://site.cfp.org.br/wp-content/uploads/2012/07/codigo-de-etica-psicologia.pdf">
+        Abrir Código de Ética (PDF)
       </a>
     </div>
   </div>
@@ -145,69 +242,6 @@
     </div>
   </div>
 
-</div>
-
-<hr style="margin:18px 0; border:none; border-top:1px solid #e5e7eb;">
-
-<h1>Resoluções e guias</h1>
-<p class="muted">
-  Cadastre resoluções, artigos e sínteses, traduzindo normas em orientações práticas para a clínica.
-</p>
-
-<div class="grid2">
-  <div class="card">
-    <h2>Novo resumo prático</h2>
-    <form method="post" action="/normas/add">
-      <label>Título</label>
-      <input name="title" required>
-
-      <label>Fonte (opcional)</label>
-      <input name="source">
-
-      <label>Resumo prático</label>
-      <textarea name="practical_summary" rows="6"></textarea>
-
-      <label>Tags</label>
-      <input name="tags">
-
-      <button type="submit">Salvar</button>
-    </form>
-  </div>
-
-  <div class="card">
-    <h2>Resoluções cadastradas</h2>
-
-    {% if cards|length == 0 %}
-      <p class="muted">Sem registros ainda.</p>
-    {% else %}
-      {% for c in cards %}
-        <div class="item">
-          <div class="itemhead">
-            <strong>{{ c.title }}</strong>
-            <span class="muted">{{ c.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
-          </div>
-
-          {% if c.source %}
-            <div class="muted">Fonte: {{ c.source }}</div>
-          {% endif %}
-
-          {% if c.tags %}
-            <div class="tag">Tags: {{ c.tags }}</div>
-          {% endif %}
-
-          {% if c.practical_summary %}
-            <pre class="pre">{{ c.practical_summary }}</pre>
-          {% endif %}
-
-          <form method="post" action="/normas/delete"
-                onsubmit="return confirm('Apagar este registro?');">
-            <input type="hidden" name="card_id" value="{{ c.id }}">
-            <button class="danger" type="submit">Apagar</button>
-          </form>
-        </div>
-      {% endfor %}
-    {% endif %}
-  </div>
 </div>
 
 {% endblock %}
