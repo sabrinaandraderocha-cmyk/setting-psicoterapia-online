@@ -77,12 +77,11 @@
       if (!textarea) return;
       if (!confirmReplaceIfNeeded(textarea)) return;
 
-      textarea.value =
-
-ABORDAGEM HUMANISTA — REGISTRO MÍNIMO
+      textarea.value = `ABORDAGEM HUMANISTA — REGISTRO MÍNIMO
 
 Foco vivido / tema emergente (experiência):
 - 
+
 Vivência e campo (o que se apresentou na relação e no contexto):
 - 
 
@@ -108,7 +107,7 @@ Observação ética:
       if (!textarea) return;
       if (!confirmReplaceIfNeeded(textarea)) return;
 
-      TCC — REGISTRO MÍNIMO
+      textarea.value = `TCC — REGISTRO MÍNIMO
 
 Agenda / foco da sessão:
 - 
@@ -147,7 +146,7 @@ Observação ética:
       if (!textarea) return;
       if (!confirmReplaceIfNeeded(textarea)) return;
 
-      PSICANÁLISE — REGISTRO MÍNIMO
+      textarea.value = `PSICANÁLISE — REGISTRO MÍNIMO
 
 Tema dominante / material emergente (sem detalhes identificáveis):
 - 
@@ -186,18 +185,14 @@ Observação ética:
 
       const text = textarea.value;
 
-      // Preferir API moderna
       try {
         if (navigator.clipboard && window.isSecureContext) {
           await navigator.clipboard.writeText(text);
           alert("Texto copiado.");
           return;
         }
-      } catch (e) {
-        // cai no fallback
-      }
+      } catch (e) {}
 
-      // Fallback antigo
       textarea.select();
       textarea.setSelectionRange(0, 999999);
       document.execCommand("copy");
@@ -233,7 +228,7 @@ Observação ética:
       const aliasSafe = aliasRaw ? aliasRaw.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 40) : "sem_codigo";
 
       const header =
-`SETTING — MODO SESSÃO (NÃO ARMAZENÁVEL)
+`SETTING — MODO SESSÃO
 Data/hora: ${dd}/${mm}/${yyyy} ${hh}:${min}
 Paciente/código: ${aliasRaw || "—"}
 
