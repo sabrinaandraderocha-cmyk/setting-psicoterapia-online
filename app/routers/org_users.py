@@ -86,8 +86,17 @@ def remove_admin(
     if not org_id or not current_id:
         return RedirectResponse("/logout", status_code=303)
 
-    # Não permitir que o admin tire o próprio admin (evita travar gestão)
+    # 1) Nunca permitir tirar o próprio admin
     if user_id == current_id:
+        return RedirectResponse("/admin/usuarios", status_code=303)
+
+    # 2) Nunca permitir deixar a organização sem admin
+    admins_count = (
+        db.query(User)
+        .filter(User.organization_id == org_id, User.role == "admin")
+        .count()
+    )
+    if admins_count <= 1:
         return RedirectResponse("/admin/usuarios", status_code=303)
 
     target = (
@@ -95,7 +104,7 @@ def remove_admin(
         .filter(User.id == user_id, User.organization_id == org_id)
         .first()
     )
-    if target:
+    if target and target.role == "admin":
         target.role = "member"
         db.commit()
 
