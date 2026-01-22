@@ -3,24 +3,35 @@ from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
 
 from .core.config import settings
 from .core.database import Base, engine, SessionLocal
 from .routers import auth, session_mode, norms, documents, library
 
-# 👇 NOVO: routers de convite + cadastro por código
+# 👇 routers de convite + cadastro por código
 from .routers import invites, signup
 
 from .deps import require_auth
 from .seed import seed_doc_templates
 
-# 👇 NOVO: seed multi (cria Organization e liga admin)
+# 👇 seed multi (cria Organization e liga admin)
 from .seed_multi import seed_org_and_admin
 
 # ============================
 # App
 # ============================
 app = FastAPI(title=settings.app_name)
+
+# ============================
+# SESSION MIDDLEWARE (OBRIGATÓRIO)
+# ============================
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SECRET_KEY", "change-me-now"),
+    same_site="lax",
+    https_only=True,
+)
 
 # ============================
 # STARTUP (seguro no Render)
@@ -41,7 +52,7 @@ def on_startup():
     db = SessionLocal()
     try:
         seed_doc_templates(db)
-        seed_org_and_admin(db)  # 👈 NOVO
+        seed_org_and_admin(db)
     finally:
         db.close()
 
@@ -64,8 +75,6 @@ app.include_router(session_mode.router)
 app.include_router(norms.router)
 app.include_router(documents.router)
 app.include_router(library.router)
-
-# 👇 NOVO
 app.include_router(invites.router)
 app.include_router(signup.router)
 
