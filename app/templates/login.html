@@ -154,11 +154,11 @@
       <h1>Bem-vinda(o) ao Setting</h1>
 
       <p class="sub">
-    Aplicativo desenvolvido <strong>no âmbito de pesquisa sobre psicoterapia on-line</strong>,
-    voltado ao apoio da prática clínica mediada por tecnologias digitais.<br /><br />
+        Aplicativo desenvolvido <strong>no âmbito de pesquisa sobre psicoterapia on-line</strong>,
+        voltado ao apoio da prática clínica mediada por tecnologias digitais.<br /><br />
 
-        Para fins de <strong>demonstração e teste</strong>, utilize as credenciais padrão:
-        <strong>usuário: admin</strong> / <strong>senha: setting@2026!</strong><br /><br />
+        Para fins de <strong>demonstração e teste</strong>, utilize as credenciais padrão configuradas no servidor (Render).<br />
+        <strong>Login: e-mail</strong> / <strong>Senha</strong>.<br /><br />
 
         Dúvidas ou dificuldades de acesso?<br />
         Envie e-mail: <strong>settingpsicoterapiaonline@gmail.com</strong>
@@ -174,8 +174,8 @@
       {% endif %}
 
       <form method="post" action="/login">
-        <label for="username">Usuário</label>
-        <input id="username" name="username" type="text" required />
+        <label for="email">E-mail</label>
+        <input id="email" name="email" type="email" required />
 
         <label for="password">Senha</label>
         <input id="password" name="password" type="password" required />
