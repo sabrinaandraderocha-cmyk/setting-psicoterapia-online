@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Solicitações • Setting</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;padding:24px;background:#f7fbff;color:#111827}
+    .card{max-width:980px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px;box-shadow:0 14px 40px rgba(17,24,39,.08)}
+    .muted{color:#6b7280}
+    .item{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:10px;background:#f8fafc}
+    button{margin-top:10px;padding:10px 12px;border:0;border-radius:12px;background:#7c3aed;color:#fff;font-weight:700;cursor:pointer}
+    .pill{display:inline-block;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;color:#374151;margin-left:6px}
+    input,select{padding:8px;border:1px solid #e5e7eb;border-radius:10px}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+    code{font-family:ui-monospace,Menlo,Consolas,monospace}
+    a{color:#7c3aed;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Solicitações de convite</h1>
+    <p class="muted">Aprove e gere um convite. Depois copie o link do código gerado.</p>
+
+    {% for r in reqs %}
+      <div class="item">
+        <div><strong>{{ r.email }}</strong>
+          {% if r.name %}<span class="pill">{{ r.name }}</span>{% endif %}
+          {% if r.handled %}<span class="pill">atendida</span>{% else %}<span class="pill">pendente</span>{% endif %}
+        </div>
+        <div class="muted" style="margin-top:6px;">{{ r.created_at.strftime("%d/%m/%Y %H:%M") }}</div>
+
+        {% if r.message %}
+          <div style="margin-top:8px;">{{ r.message }}</div>
+        {% endif %}
+
+        {% if r.handled and r.invite_code %}
+          <div style="margin-top:8px;">
+            Convite: <code>{{ r.invite_code }}</code> —
+            <a href="/signup?code={{ r.invite_code }}">/signup?code={{ r.invite_code }}</a>
+          </div>
+        {% else %}
+          <form class="row" method="post" action="/admin/solicitacoes/aprovar">
+            <input type="hidden" name="request_id" value="{{ r.id }}">
+            <select name="role">
+              <option value="member">member</option>
+              <option value="admin">admin</option>
+            </select>
+            <input name="max_uses" type="number" min="1" value="1">
+            <input name="expires_days" type="number" min="1" value="7">
+            <button type="submit">Aprovar e gerar convite</button>
+          </form>
+        {% endif %}
+      </div>
+    {% else %}
+      <p class="muted">Sem solicitações ainda.</p>
+    {% endfor %}
+
+    <p class="muted" style="margin-top:14px;"><a href="/">Voltar</a></p>
+  </div>
+</body>
+</html>
