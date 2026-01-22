@@ -7,18 +7,21 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from .core.config import settings
 from .core.database import Base, engine, SessionLocal
+from .deps import require_auth
+
+# Routers principais
 from .routers import auth, session_mode, norms, documents, library
 
-# 👇 convites + signup
+# Convites e cadastro
 from .routers import invites, signup
-
-# 👇 solicitar convite + admin solicitações
 from .routers import invite_requests
 
-# 👇 NOVO: gestão de usuários da organização
+# Gestão de usuários da organização
 from .routers import org_users
 
-from .deps import require_auth
+# 🔹 NOVO: páginas institucionais (termos, política etc.)
+from .routers import pages
+
 from .seed import seed_doc_templates
 from .seed_multi import seed_org_and_admin
 
@@ -28,7 +31,7 @@ from .seed_multi import seed_org_and_admin
 app = FastAPI(title=settings.app_name)
 
 # ============================
-# SESSION MIDDLEWARE (OBRIGATÓRIO)
+# SESSION MIDDLEWARE
 # ============================
 app.add_middleware(
     SessionMiddleware,
@@ -38,7 +41,7 @@ app.add_middleware(
 )
 
 # ============================
-# STARTUP (seguro no Render)
+# STARTUP
 # ============================
 @app.on_event("startup")
 def on_startup():
@@ -78,14 +81,14 @@ app.include_router(session_mode.router)
 app.include_router(norms.router)
 app.include_router(documents.router)
 app.include_router(library.router)
+
 app.include_router(invites.router)
 app.include_router(signup.router)
-
-# 👇 Solicitar convite + admin solicitações
 app.include_router(invite_requests.router)
-
-# 👇 Gestão de usuários (admin)
 app.include_router(org_users.router)
+
+# 🔹 PÁGINAS INSTITUCIONAIS
+app.include_router(pages.router)
 
 # ============================
 # HOME
