@@ -3,12 +3,50 @@ from sqlalchemy import (
     Integer,
     DateTime,
     Text,
-    ForeignKey
+    ForeignKey,
+    Boolean
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
+import secrets
+import string
 
 from .core.database import Base
+
+
+# =========================
+# Helpers
+# =========================
+def generate_invite_code(length: int = 10) -> str:
+    alphabet = string.ascii_uppercase + string.digits
+    return "".join(secrets.choice(alphabet) for _ in range(length))
+
+
+# =========================
+# Organização / Clínica
+# =========================
+class Organization(Base):
+    __tablename__ = "organizations"
+
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    name: Mapped[str] = mapped_column(
+        String(120),
+        unique=True,
+        nullable=False
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow
+    )
+
+    users = relationship("User", back_populates="organization")
+    invites = relationship("InviteCode", back_populates="organization")
 
 
 # =========================
@@ -35,10 +73,96 @@ class User(Base):
         nullable=False
     )
 
+    # 👇 MULTIUSUÁRIO
+    organization_id: Mapped[int | None] = mapped_column(
+        ForeignKey("organizations.id"),
+        nullable=True,
+        index=True
+    )
+
+    role: Mapped[str] = mapped_column(
+        String(20),
+        default="member"  # admin | member
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.utcnow
     )
+
+    organization = relationship("Organization", back_populates="users")
+
+
+# =========================
+# Convites por código
+# =========================
+class InviteCode(Base):
+    __tablename__ = "invite_codes"
+
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    code: Mapped[str] = mapped_column(
+        String(32),
+        unique=True,
+        nullable=False,
+        index=True
+    )
+
+    organization_id: Mapped[int] = mapped_column(
+        ForeignKey("organizations.id"),
+        nullable=False,
+        index=True
+    )
+
+    role: Mapped[str] = mapped_column(
+        String(20),
+        default="member"
+    )
+
+    max_uses: Mapped[int] = mapped_column(
+        Integer,
+        default=1
+    )
+
+    uses: Mapped[int] = mapped_column(
+        Integer,
+        default=0
+    )
+
+    expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime,
+        nullable=True
+    )
+
+    revoked: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow
+    )
+
+    created_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=True
+    )
+
+    organization = relationship("Organization", back_populates="invites")
+
+    def is_valid(self) -> bool:
+        if self.revoked:
+            return False
+        if self.expires_at and datetime.utcnow() > self.expires_at:
+            return False
+        if self.max_uses is not None and self.uses >= self.max_uses:
+            return False
+        return True
 
 
 # =========================
@@ -55,6 +179,12 @@ class SessionNote(Base):
 
     owner_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"),
+        nullable=False,
+        index=True
+    )
+
+    organization_id: Mapped[int] = mapped_column(
+        ForeignKey("organizations.id"),
         nullable=False,
         index=True
     )
@@ -79,6 +209,7 @@ class SessionNote(Base):
     )
 
     owner = relationship("User")
+    organization = relationship("Organization")
 
 
 # =========================
@@ -95,6 +226,12 @@ class NormCard(Base):
 
     owner_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"),
+        nullable=False,
+        index=True
+    )
+
+    organization_id: Mapped[int] = mapped_column(
+        ForeignKey("organizations.id"),
         nullable=False,
         index=True
     )
@@ -124,6 +261,7 @@ class NormCard(Base):
     )
 
     owner = relationship("User")
+    organization = relationship("Organization")
 
 
 # =========================
@@ -144,6 +282,12 @@ class DocTemplate(Base):
         index=True
     )
 
+    organization_id: Mapped[int] = mapped_column(
+        ForeignKey("organizations.id"),
+        nullable=False,
+        index=True
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.utcnow
@@ -159,6 +303,7 @@ class DocTemplate(Base):
     )
 
     owner = relationship("User")
+    organization = relationship("Organization")
 
 
 # =========================
@@ -175,6 +320,12 @@ class LibraryItem(Base):
 
     owner_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"),
+        nullable=False,
+        index=True
+    )
+
+    organization_id: Mapped[int] = mapped_column(
+        ForeignKey("organizations.id"),
         nullable=False,
         index=True
     )
@@ -198,3 +349,4 @@ class LibraryItem(Base):
     )
 
     owner = relationship("User")
+    organization = relationship("Organization")
