@@ -12,9 +12,6 @@ router = APIRouter(prefix="/invites", tags=["Convites"])
 templates = Jinja2Templates(directory="app/templates")
 
 
-# =========================
-# Helpers de sessão
-# =========================
 def _org_id(request: Request) -> int | None:
     return request.session.get("org_id")
 
@@ -23,9 +20,6 @@ def _user_id(request: Request) -> int | None:
     return request.session.get("user_id")
 
 
-# =========================
-# Página de convites (ADMIN)
-# =========================
 @router.get("")
 def invites_home(request: Request, db: Session = Depends(get_db)):
     if not require_auth(request):
@@ -48,16 +42,10 @@ def invites_home(request: Request, db: Session = Depends(get_db)):
 
     return templates.TemplateResponse(
         "invites.html",
-        {
-            "request": request,
-            "invites": invites,
-        },
+        {"request": request, "invites": invites},
     )
 
 
-# =========================
-# Criar convite
-# =========================
 @router.post("/create")
 def create_invite(
     request: Request,
@@ -68,7 +56,6 @@ def create_invite(
 ):
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
-
     if not require_admin(request):
         return RedirectResponse(url="/", status_code=303)
 
@@ -98,14 +85,40 @@ def create_invite(
     return RedirectResponse(url="/invites", status_code=303)
 
 
-# =========================
-# Visualizar convite individual
-# =========================
+@router.post("/revoke")
+def revoke_invite(
+    request: Request,
+    invite_id: int = Form(...),
+    db: Session = Depends(get_db),
+):
+    """
+    Revoga um convite (admin only).
+    """
+    if not require_auth(request):
+        return RedirectResponse(url="/login", status_code=303)
+    if not require_admin(request):
+        return RedirectResponse(url="/", status_code=303)
+
+    org_id = _org_id(request)
+    if not org_id:
+        return RedirectResponse(url="/logout", status_code=303)
+
+    inv = (
+        db.query(InviteCode)
+        .filter(InviteCode.id == invite_id, InviteCode.organization_id == org_id)
+        .first()
+    )
+    if inv:
+        inv.revoked = True
+        db.commit()
+
+    return RedirectResponse(url="/invites", status_code=303)
+
+
 @router.get("/{code}")
 def show_invite(code: str, request: Request, db: Session = Depends(get_db)):
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
-
     if not require_admin(request):
         return RedirectResponse(url="/", status_code=303)
 
@@ -115,15 +128,15 @@ def show_invite(code: str, request: Request, db: Session = Depends(get_db)):
 
     invite = (
         db.query(InviteCode)
-        .filter(
-            InviteCode.code == code,
-            InviteCode.organization_id == org_id,
-        )
+        .filter(InviteCode.code == code, InviteCode.organization_id == org_id)
         .first()
     )
-
     if not invite:
         return RedirectResponse(url="/invites", status_code=303)
+
+    remaining = None
+    if invite.max_uses is not None:
+        remaining = max(invite.max_uses - (invite.uses or 0), 0)
 
     return templates.TemplateResponse(
         "invite_show.html",
@@ -134,6 +147,7 @@ def show_invite(code: str, request: Request, db: Session = Depends(get_db)):
             "expires_at": invite.expires_at,
             "max_uses": invite.max_uses,
             "uses": invite.uses,
+            "remaining": remaining,
             "revoked": invite.revoked,
         },
     )
