@@ -4,55 +4,68 @@
 <h1>Setting</h1>
 
 <p class="muted">
-  Uma ferramenta para psicólogos que realizam psicoterapia on-line.
-  O Setting organiza o essencial da prática clínica digital: o cuidado com o setting,
-  a continuidade entre sessões e as decisões éticas que atravessam o atendimento mediado por tecnologias.
+  Uma ferramenta de apoio ético para psicólogos que realizam psicoterapia on-line.
+  O Setting foi desenvolvido para sustentar o cuidado com o <strong>setting terapêutico digital</strong>,
+  oferecendo recursos de organização, reflexão e geração de textos clínicos,
+  <strong>sem armazenamento automático de informações sensíveis</strong>.
 </p>
 
 <div class="grid">
   <div class="card">
     <h2>Modo Sessão</h2>
     <p>
-      Registre o essencial de cada sessão em um único apontamento, com foco nas
-      <strong>suas intervenções e condutas clínicas</strong> (conforme sua abordagem).
-      Use modelos Humanista, TCC ou Psicanálise para orientar o registro com
-      <strong>mínimo necessário</strong>, sem dados identificáveis, sustentando combinados e continuidade do processo.
+      Elabore anotações clínicas de apoio à reflexão sobre cada sessão,
+      com foco nas <strong>suas intervenções e condutas clínicas</strong>,
+      conforme sua abordagem teórica.
+      <br><br>
+      O Modo Sessão não armazena dados: funciona como um espaço de
+      <strong>escrita orientada</strong>, voltado ao registro mínimo necessário
+      e ao cuidado ético com a prática.
     </p>
-    <a class="btn" href="/modo-sessao">Registrar Sessão</a>
+    <a class="btn" href="/modo-sessao">Escrever nota de sessão</a>
   </div>
 
   <div class="card">
     <h2>Normas</h2>
     <p>
-      Reúna resoluções do CFP, diretrizes éticas e referências teóricas
-      e traduza esses documentos para decisões práticas do atendimento on-line:
-      privacidade, limites, registros e comunicação entre sessões.
+      Consulte resoluções do CFP, diretrizes éticas e referências,
+      traduzidas em orientações práticas para o atendimento on-line.
+      <br><br>
+      O conteúdo tem caráter <strong>formativo e reflexivo</strong>,
+      auxiliando decisões sobre privacidade, limites,
+      registros e comunicação entre sessões.
     </p>
-    <a class="btn" href="/normas">Consultar Normas</a>
+    <a class="btn" href="/normas">Consultar normas</a>
   </div>
 
   <div class="card">
     <h2>Documentos</h2>
     <p>
-      Organize termos de consentimento, combinados do setting on-line
-      e outros documentos necessários à prática clínica mediada por tecnologias,
-      com modelos editáveis e geração de versões preenchidas.
+      Gere documentos clínicos em <strong>formato texto (.txt)</strong>,
+      como termos, declarações e combinados do setting on-line.
+      <br><br>
+      Os documentos são preenchidos sob demanda
+      e podem ser editados externamente (Word/Docs),
+      <strong>sem armazenamento automático</strong>.
     </p>
-    <a class="btn" href="/documentos">Gerenciar Documentos</a>
+    <a class="btn" href="/documentos">Gerar documentos</a>
   </div>
 
   <div class="card">
     <h2>Biblioteca</h2>
     <p>
-      Centralize artigos, textos de apoio e produções autorais
-      para consulta durante o trabalho clínico.
-      Um espaço de estudo permanente integrado à prática da psicoterapia on-line.
+      Acesse textos autorais e links externos
+      para apoio ao estudo e à reflexão sobre psicoterapia on-line.
+      <br><br>
+      A Biblioteca não funciona como repositório de arquivos clínicos,
+      mas como um <strong>espaço formativo</strong>,
+      integrado às decisões éticas da prática.
     </p>
-    <a class="btn" href="/biblioteca">Acessar Biblioteca</a>
+    <a class="btn" href="/biblioteca">Explorar referências</a>
   </div>
 </div>
 
-<!-- Seção destacada (mais separada e institucional) -->
+<!-- Seção institucional -->
 <section class="section-highlight">
   <h2>O que o Setting propõe</h2>
   <p class="muted" style="margin-top:-4px; margin-bottom:14px;">
@@ -61,9 +74,10 @@
 
   <ul>
     <li>Sustentar o setting clínico no ambiente digital.</li>
-    <li>Apoiar a organização do trabalho psicoterapêutico on-line.</li>
-    <li>Facilitar decisões éticas e práticas no uso de tecnologias.</li>
+    <li>Apoiar decisões éticas na prática mediada por tecnologias.</li>
+    <li>Oferecer ferramentas sem armazenamento automático de dados sensíveis.</li>
     <li>Respeitar diferentes abordagens teóricas da Psicologia.</li>
+    <li>Evitar a burocratização da clínica e o uso de checklists engessados.</li>
   </ul>
 </section>
 
@@ -79,17 +93,18 @@
     <div class="ob-body">
       <ol class="ob-steps">
         <li>
-          <strong>Este não é um prontuário clínico.</strong>
+          <strong>Este não é um prontuário clínico.</strong><br>
           O Setting é uma ferramenta de apoio à organização do setting terapêutico on-line.
         </li>
         <li>
-          <strong>Registre apenas o essencial.</strong>
+          <strong>Registre apenas o essencial.</strong><br>
           Priorize foco, intervenções centrais, combinados e encaminhamentos,
           respeitando o princípio do mínimo necessário.
         </li>
         <li>
-          <strong>As decisões clínicas continuam sendo suas.</strong>
-          O aplicativo não substitui julgamento profissional nem as normativas vigentes.
+          <strong>As decisões clínicas continuam sendo suas.</strong><br>
+          O aplicativo não substitui julgamento profissional
+          nem as normativas éticas vigentes.
         </li>
       </ol>
 
@@ -106,7 +121,7 @@
 </div>
 
 <script>
-  const ONBOARDING_KEY = "setting_onboarding_v1";
+  const ONBOARDING_KEY = "setting_onboarding_v2";
 
   function showOnboarding() {
     const overlay = document.getElementById("onboardingOverlay");
