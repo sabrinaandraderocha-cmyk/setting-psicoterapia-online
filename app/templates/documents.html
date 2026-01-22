@@ -2,12 +2,12 @@
 {% block content %}
 
 <div class="card tip" style="margin-bottom:14px;">
-  <h2>Gerar PDF</h2>
+  <h2>Gerar .txt</h2>
   <p class="muted">
-    Gere um PDF para emissão e organização. Preencha apenas o mínimo necessário e revise antes de utilizar.
+    Gere um arquivo <strong>.txt</strong> para edição rápida (Word/Docs). Preencha apenas o mínimo necessário e revise antes de utilizar.
   </p>
 
-  <form method="post" action="/documentos/gerar-documento-pdf" target="_blank">
+  <form method="post" action="/documentos/gerar-documento-txt">
     <label>Tipo</label>
     <select name="tipo">
       <option value="declaracao">Declaração de comparecimento</option>
@@ -32,7 +32,7 @@
     <label>Data de emissão</label>
     <input name="data_emissao" placeholder="dd/mm/aaaa">
 
-    <button type="submit">Gerar PDF</button>
+    <button type="submit">Baixar .txt</button>
   </form>
 </div>
 
