@@ -123,10 +123,8 @@ h2 {
   border-color: #c53030;
 }
 
-/* ✅ Home: força botões alinhados no fim dos cards */
+/* Home: força botões no fim */
 .grid .card {
-  display: flex;
-  flex-direction: column;
   min-height: 220px;
 }
 
@@ -136,8 +134,7 @@ h2 {
 }
 
 /* =========================
-   Cards editoriais (Normas)
-   (sem min-height para evitar espaço em branco)
+   Cards editoriais
    ========================= */
 .card.editorial {
   display: flex;
@@ -151,33 +148,23 @@ h2 {
 }
 
 .card.editorial .content {
-  display: block; /* conteúdo define altura do card */
+  display: block;
 }
 
-.card.editorial p {
+.card.editorial p,
+.card.editorial li {
   font-size: 15.5px;
   line-height: 1.7;
-  margin: 0;
 }
 
 .card.editorial ul {
   padding-left: 18px;
-  margin: 8px 0 0;
-}
-
-.card.editorial li {
-  font-size: 15.5px;
-  line-height: 1.7;
-  margin: 8px 0;
+  margin-top: 8px;
 }
 
 .card.editorial strong {
   font-weight: 600;
   color: var(--accent-dark);
-}
-
-.card.editorial p.muted {
-  font-size: 14.5px;
 }
 
 /* =========================
@@ -229,7 +216,6 @@ textarea {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 10px;
-  outline: none;
 }
 
 input:focus,
@@ -264,7 +250,6 @@ button.danger {
   background: var(--danger);
 }
 
-/* Botão secundário (para Código de Ética) */
 .btn.secondary {
   background: transparent;
   color: var(--accent-dark);
@@ -284,7 +269,6 @@ button.danger {
   border-radius: 12px;
   padding: 12px;
   white-space: pre-wrap;
-  overflow: auto;
 }
 
 /* =========================
@@ -297,17 +281,10 @@ button.danger {
   flex-wrap: wrap;
 }
 
-.subform { margin-top: 10px; }
-
 hr {
   border: none;
   border-top: 1px solid var(--border);
   margin: 14px 0;
-}
-
-details summary {
-  cursor: pointer;
-  color: var(--accent-dark);
 }
 
 /* =========================
@@ -315,13 +292,21 @@ details summary {
    ========================= */
 .footer {
   margin-top: 48px;
-  padding: 28px 0 40px;
+  padding: 28px 16px 40px; /* 👈 espaço lateral corrigido */
   background: #fafafa;
   border-top: 1px solid var(--border);
   font-size: 13.5px;
   line-height: 1.6;
   color: var(--muted);
-  text-align: left;
+}
+
+.footer .footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.footer strong {
+  color: var(--accent-dark);
 }
 
 /* =========================
@@ -330,7 +315,7 @@ details summary {
 @media (max-width: 900px) {
   .grid, .grid2 { grid-template-columns: 1fr; }
   .nav { display: none; }
-  .grid .card { min-height: auto; } /* no mobile não precisa forçar altura */
+  .grid .card { min-height: auto; }
 }
 
 /* =========================
@@ -358,60 +343,10 @@ details summary {
 .dark-mode .card {
   background: #0f172a !important;
   border-color: #1f2937 !important;
-  box-shadow: 0 10px 30px rgba(0,0,0,.35) !important;
-}
-
-.dark-mode input,
-.dark-mode select,
-.dark-mode textarea {
-  background: #0b1220 !important;
-  color: #e5e7eb !important;
-  border-color: #1f2937 !important;
-}
-
-.dark-mode .pre {
-  background: #0b1220 !important;
-  border-color: #1f2937 !important;
-}
-
-.dark-mode a { color: #d8a1b6 !important; }
-
-.dark-mode .btn.secondary {
-  color: #d8a1b6;
-  border-color: #1f2937;
-  background: transparent;
-}
-
-.dark-mode .btn.secondary:hover {
-  background: rgba(216,161,182,0.12);
 }
 
 .dark-mode .footer {
   background: #0b1220;
   border-top: 1px solid #1f2937;
   color: #9ca3af;
-}
-/* =========================
-   Normas: grid específico (não mexe na Home)
-   ========================= */
-.norms-grid .card{
-  min-height: auto;      /* anula o min-height da Home */
-  height: 100%;          /* iguala alturas por linha */
-}
-
-.norms-grid{
-  align-items: stretch;  /* estica itens da linha */
-}
-
-.norms-grid .card{
-  display: flex;
-  flex-direction: column;
-}
-
-.norms-grid .card .content{
-  flex: 1;               /* conteúdo ocupa o meio */
-}
-
-.norms-grid .row{
-  margin-top: auto;      /* ações ficam no fim do card */
 }
