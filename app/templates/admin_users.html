@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Usuários • Setting</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;padding:24px;background:#f7fbff;color:#111827}
+    .card{max-width:980px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px;box-shadow:0 14px 40px rgba(17,24,39,.08)}
+    h1{margin:0 0 8px 0}
+    .muted{color:#6b7280}
+    .item{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:10px;background:#f8fafc;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .pill{display:inline-block;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;color:#374151;margin-left:6px}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    button{padding:10px 12px;border:0;border-radius:12px;background:#7c3aed;color:#fff;font-weight:700;cursor:pointer}
+    button:hover{filter:brightness(1.05)}
+    .danger{background:#b91c1c}
+    .danger:hover{filter:brightness(1.05)}
+    a{color:#7c3aed;text-decoration:none}
+    code{font-family:ui-monospace,Menlo,Consolas,monospace}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Usuários da organização</h1>
+    <p class="muted">Apenas admins podem gerenciar permissões. “Admin” tem acesso a convites e solicitações.</p>
+
+    {% for u in users %}
+      <div class="item">
+        <div>
+          <div><strong>{{ u.email }}</strong>
+            {% if u.role == "admin" %}
+              <span class="pill">admin</span>
+            {% else %}
+              <span class="pill">member</span>
+            {% endif %}
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            Criado em: {% if u.created_at %}{{ u.created_at.strftime("%d/%m/%Y %H:%M") }}{% else %}-{% endif %}
+          </div>
+        </div>
+
+        <div class="row">
+          {% if u.role != "admin" %}
+            <form method="post" action="/admin/usuarios/tornar-admin" onsubmit="return confirm('Tornar este usuário admin?');">
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <button type="submit">Tornar admin</button>
+            </form>
+          {% else %}
+            <form method="post" action="/admin/usuarios/remover-admin" onsubmit="return confirm('Remover admin deste usuário?');">
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <button class="danger" type="submit">Remover admin</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <p class="muted">Nenhum usuário encontrado.</p>
+    {% endfor %}
+
+    <p class="muted" style="margin-top:14px;">
+      <a href="/invites">Voltar para Convites</a> • <a href="/admin/solicitacoes">Ver solicitações</a> • <a href="/">Home</a>
+    </p>
+  </div>
+</body>
+</html>
