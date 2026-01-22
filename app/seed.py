@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from .models import DocTemplate
+
+from .models import DocTemplate, Organization, User
 
 DEFAULT_DOC_TEMPLATES = [
     {
@@ -107,17 +108,46 @@ Assinatura do(a) psicólogo(a): _______________________
 
 def seed_doc_templates(db: Session) -> int:
     """
-    Cria modelos padrão apenas se ainda não existirem (por nome).
-    Retorna quantos foram criados.
+    Cria modelos padrão PARA CADA ORGANIZAÇÃO, apenas se ainda não existirem
+    (por organization_id + name). Preenche owner_id com o admin da org.
+    Retorna quantos foram criados no total.
     """
     created = 0
-    for tpl in DEFAULT_DOC_TEMPLATES:
-        exists = db.query(DocTemplate).filter(DocTemplate.name == tpl["name"]).first()
-        if exists:
+
+    orgs = db.query(Organization).all()
+    for org in orgs:
+        admin = (
+            db.query(User)
+            .filter(User.organization_id == org.id, User.role == "admin")
+            .first()
+        )
+        if not admin:
+            # sem admin, não dá pra setar owner_id com segurança
             continue
-        db.add(DocTemplate(name=tpl["name"], body=tpl["body"]))
-        created += 1
+
+        for tpl in DEFAULT_DOC_TEMPLATES:
+            exists = (
+                db.query(DocTemplate)
+                .filter(
+                    DocTemplate.organization_id == org.id,
+                    DocTemplate.name == tpl["name"],
+                )
+                .first()
+            )
+            if exists:
+                continue
+
+            db.add(
+                DocTemplate(
+                    owner_id=admin.id,
+                    organization_id=org.id,
+                    name=tpl["name"],
+                    body=tpl["body"],
+                )
+            )
+            created += 1
 
     if created:
         db.commit()
+
     return created
