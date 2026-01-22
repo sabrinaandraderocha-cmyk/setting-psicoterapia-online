@@ -12,8 +12,11 @@ from .routers import auth, session_mode, norms, documents, library
 # 👇 convites + signup
 from .routers import invites, signup
 
-# 👇 NOVO: solicitar convite + admin solicitações
+# 👇 solicitar convite + admin solicitações
 from .routers import invite_requests
+
+# 👇 NOVO: gestão de usuários da organização
+from .routers import org_users
 
 from .deps import require_auth
 from .seed import seed_doc_templates
@@ -44,7 +47,6 @@ def on_startup():
     - Reset do banco SOMENTE se RESET_DB=1
     - Seed inicial controlado
     """
-
     if os.getenv("RESET_DB") == "1":
         Base.metadata.drop_all(bind=engine)
 
@@ -79,8 +81,11 @@ app.include_router(library.router)
 app.include_router(invites.router)
 app.include_router(signup.router)
 
-# 👇 NOVO
+# 👇 Solicitar convite + admin solicitações
 app.include_router(invite_requests.router)
+
+# 👇 Gestão de usuários (admin)
+app.include_router(org_users.router)
 
 # ============================
 # HOME
