@@ -2,14 +2,19 @@
 {% block content %}
 
 <div class="card tip" style="margin-bottom:14px;">
-  <h2>Gerar PDF (modelo)</h2>
-  <p class="muted">Gera um PDF de modelo (declaração/atestado) para você revisar e usar no Word/Docs, se desejar.</p>
+  <h2>Gerar PDF</h2>
+  <p class="muted">
+    Gere um PDF para emissão e organização. Preencha apenas o mínimo necessário e revise antes de utilizar.
+  </p>
 
   <form method="post" action="/documentos/gerar-documento-pdf" target="_blank">
     <label>Tipo</label>
     <select name="tipo">
-      <option value="declaracao">Declaração de comparecimento (modelo)</option>
-      <option value="atestado">Atestado (modelo)</option>
+      <option value="declaracao">Declaração de comparecimento</option>
+      <option value="atestado">Atestado</option>
+      <option value="consentimento">Termo de Consentimento</option>
+      <option value="contrato">Contrato terapêutico</option>
+      <option value="recibo">Recibo simples</option>
     </select>
 
     <label>Paciente (nome/apelido)</label>
@@ -31,14 +36,14 @@
   </form>
 </div>
 
-<h1>Documentos (modelos)</h1>
-<p class="muted">Edite modelos e gere uma versão preenchida. Você pode copiar o texto gerado e colar no Word/Docs.</p>
+<h1>Documentos</h1>
+<p class="muted">Edite documentos e gere uma versão preenchida. Você pode copiar o texto gerado e colar no Word/Docs.</p>
 
 <div class="grid2">
 
   <!-- Coluna esquerda: criação + variáveis -->
   <div class="card">
-    <h2>Criar novo modelo</h2>
+    <h2>Criar novo documento</h2>
 
     <form method="post" action="/documentos/add">
       <label>Nome</label>
@@ -64,31 +69,31 @@
     </div>
   </div>
 
-  <!-- Coluna direita: lista de modelos -->
+  <!-- Coluna direita: lista de documentos -->
   <div class="card">
-    <h2>Modelos</h2>
+    <h2>Documentos</h2>
 
     {% if docs and (docs|length > 0) %}
       <div class="muted" style="margin:8px 0 12px;">
         Dica: use <strong>Gerar texto</strong> para abrir o formulário de preenchimento.
-        Use <strong>Abrir/Editar</strong> para ajustar o corpo do modelo.
+        Use <strong>Abrir/Editar</strong> para ajustar o corpo do documento.
       </div>
 
-      <!-- Modelos base -->
+      <!-- Documentos base -->
       <div class="card tip" style="margin-bottom:12px;">
         <div class="row" style="justify-content:space-between; align-items:center;">
-          <h3 style="margin:0;">Modelos CFP (base)</h3>
-          <div class="tag">recomendados</div>
+          <h3 style="margin:0;">Documentos base</h3>
+          <div class="tag">iniciais</div>
         </div>
         <p class="muted" style="margin:8px 0 0; font-size:12px;">
-          Modelos iniciais para uso profissional. Você pode editar e adaptar conforme sua prática, respeitando o sigilo e o mínimo necessário.
+          Textos iniciais para uso profissional. Você pode editar e adaptar conforme sua prática, respeitando o sigilo e o mínimo necessário.
         </p>
       </div>
 
       {% set found_base = false %}
       {% for d in docs %}
         {% set n = (d.name or '')|lower %}
-        {% if ('atestado' in n) or ('declara' in n) or ('consent' in n) or ('combinad' in n) %}
+        {% if ('atestado' in n) or ('declara' in n) or ('consent' in n) or ('combinad' in n) or ('contrat' in n) or ('recibo' in n) %}
           {% set found_base = true %}
           <div class="item">
             <div class="itemhead">
@@ -103,7 +108,7 @@
               <button type="button" class="btn" onclick="toggleRender('{{ d.id }}')">Gerar texto</button>
               <span class="tag">base</span>
 
-              <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este modelo?');">
+              <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este documento?');">
                 <input type="hidden" name="doc_id" value="{{ d.id }}">
                 <button class="danger" type="submit">Apagar</button>
               </form>
@@ -146,7 +151,7 @@
                 <input name="reagendamento_regras" placeholder="ex.: até 24h antes">
 
                 <label>Janela de contato entre sessões</label>
-                <input name="janela_contato" placeholder="ex.: seg-sex 9h-18h (nao emergencias)">
+                <input name="janela_contato" placeholder="ex.: seg-sex 9h-18h (não emergências)">
 
                 <button type="submit">Gerar texto preenchido</button>
               </form>
@@ -156,26 +161,26 @@
       {% endfor %}
 
       {% if not found_base %}
-        <p class="muted">Sem modelos base identificados.</p>
+        <p class="muted">Sem documentos base identificados.</p>
       {% endif %}
 
       <hr>
 
-      <!-- Meus modelos -->
+      <!-- Meus documentos -->
       <div class="card" style="margin-bottom:12px;">
         <div class="row" style="justify-content:space-between; align-items:center;">
-          <h3 style="margin:0;">Meus modelos</h3>
+          <h3 style="margin:0;">Meus documentos</h3>
           <div class="tag">personalizados</div>
         </div>
         <p class="muted" style="margin:8px 0 0; font-size:12px;">
-          Modelos criados/ajustados por você para sua prática.
+          Documentos criados/ajustados por você para sua prática.
         </p>
       </div>
 
       {% set found_user = false %}
       {% for d in docs %}
         {% set n = (d.name or '')|lower %}
-        {% if not (('atestado' in n) or ('declara' in n) or ('consent' in n) or ('combinad' in n)) %}
+        {% if not (('atestado' in n) or ('declara' in n) or ('consent' in n) or ('combinad' in n) or ('contrat' in n) or ('recibo' in n)) %}
           {% set found_user = true %}
           <div class="item">
             <div class="itemhead">
@@ -189,7 +194,7 @@
               <button type="button" class="btn" onclick="toggleEdit('{{ d.id }}')">Abrir/Editar</button>
               <button type="button" class="btn" onclick="toggleRender('{{ d.id }}')">Gerar texto</button>
 
-              <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este modelo?');">
+              <form method="post" action="/documentos/delete" onsubmit="return confirm('Apagar este documento?');">
                 <input type="hidden" name="doc_id" value="{{ d.id }}">
                 <button class="danger" type="submit">Apagar</button>
               </form>
@@ -232,7 +237,7 @@
                 <input name="reagendamento_regras" placeholder="ex.: até 24h antes">
 
                 <label>Janela de contato entre sessões</label>
-                <input name="janela_contato" placeholder="ex.: seg-sex 9h-18h (nao emergencias)">
+                <input name="janela_contato" placeholder="ex.: seg-sex 9h-18h (não emergências)">
 
                 <button type="submit">Gerar texto preenchido</button>
               </form>
@@ -242,7 +247,7 @@
       {% endfor %}
 
       {% if not found_user %}
-        <p class="muted">Você ainda não criou modelos personalizados.</p>
+        <p class="muted">Você ainda não criou documentos personalizados.</p>
       {% endif %}
 
       <script>
@@ -260,7 +265,7 @@
       </script>
 
     {% else %}
-      <p class="muted">Sem modelos ainda.</p>
+      <p class="muted">Sem documentos ainda.</p>
     {% endif %}
   </div>
 
