@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from fastapi import APIRouter, Request, Form, Depends
-from fastapi.responses import RedirectResponse, PlainTextResponse, FileResponse
+from fastapi.responses import RedirectResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from fpdf import FPDF
@@ -14,52 +14,19 @@ router = APIRouter(prefix="/documentos", tags=["Documentos"])
 templates = Jinja2Templates(directory="app/templates")
 
 
-DEFAULT_TEMPLATES = [
-    ("Termo de consentimento para psicoterapia on-line (rascunho)",
-"""TERMO DE CONSENTIMENTO PARA PSICOTERAPIA ON-LINE
-
-Profissional: {{PROFISSIONAL_NOME}} (CRP: {{CRP}})
-Paciente: {{PACIENTE_NOME}}
-Data: {{DATA}}
-
-1. Objetivo
-Este termo registra o consentimento informado para a realização de psicoterapia por meios digitais.
-
-2. Confidencialidade e privacidade
-As sessões dependem de condições mínimas de privacidade (ambiente reservado, uso de fones quando necessário, ausência de terceiros).
-
-3. Registros e armazenamento
-O profissional realizará registros clínicos mínimos necessários, mantendo sigilo e segurança conforme legislação aplicável.
-
-4. Limites e emergências
-Este atendimento não substitui serviços de urgência/emergência. Em risco imediato, procure o serviço local e/ou acione contatos de emergência.
-
-Assinaturas:
-Profissional: ______________________
-Paciente: _________________________
-"""),
-    ("Contrato terapêutico e combinados do setting on-line (rascunho)",
-"""COMBINADOS DO SETTING ON-LINE
-
-Profissional: {{PROFISSIONAL_NOME}} (CRP: {{CRP}})
-Paciente: {{PACIENTE_NOME}}
-
-- Pontualidade: tolerância de {{TOLERANCIA_MIN}} minutos.
-- Pagamento: {{PAGAMENTO_REGRAS}}
-- Reagendamento/cancelamento: {{REAGENDAMENTO_REGRAS}}
-- Ambiente: paciente se compromete a buscar local privado e estável.
-- Comunicação entre sessões: {{JANELA_CONTATO}}
-
-Assinaturas:
-Profissional: ______________________
-Paciente: _________________________
-"""),
-]
-
-
 # Pasta para PDFs gerados
-GENERATED_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "generated")
+GENERATED_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)), "data", "generated"
+)
 os.makedirs(GENERATED_DIR, exist_ok=True)
+
+
+def _org_id(request: Request) -> int | None:
+    return request.session.get("org_id")
+
+
+def _user_id(request: Request) -> int | None:
+    return request.session.get("user_id")
 
 
 @router.get("")
@@ -67,32 +34,71 @@ def docs_home(request: Request, db: Session = Depends(get_db)):
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
 
-    # Seed inicial (somente se o banco estiver vazio)
-    if db.query(DocTemplate).count() == 0:
-        for name, body in DEFAULT_TEMPLATES:
-            db.add(DocTemplate(name=name, body=body))
-        db.commit()
+    org_id = _org_id(request)
+    if not org_id:
+        # usuário sem organização (não deveria acontecer depois do seed_multi)
+        return RedirectResponse(url="/logout", status_code=303)
 
-    docs = db.query(DocTemplate).order_by(DocTemplate.created_at.desc()).all()
-    return templates.TemplateResponse("documents.html", {"request": request, "docs": docs})
+    docs = (
+        db.query(DocTemplate)
+        .filter(DocTemplate.organization_id == org_id)
+        .order_by(DocTemplate.created_at.desc())
+        .all()
+    )
+
+    return templates.TemplateResponse(
+        "documents.html",
+        {"request": request, "docs": docs},
+    )
 
 
 @router.post("/add")
-def add_doc(request: Request, name: str = Form(...), body: str = Form(""), db: Session = Depends(get_db)):
+def add_doc(
+    request: Request,
+    name: str = Form(...),
+    body: str = Form(""),
+    db: Session = Depends(get_db),
+):
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
 
-    db.add(DocTemplate(name=name.strip(), body=body))
+    org_id = _org_id(request)
+    user_id = _user_id(request)
+    if not org_id or not user_id:
+        return RedirectResponse(url="/logout", status_code=303)
+
+    db.add(
+        DocTemplate(
+            name=name.strip(),
+            body=body,
+            owner_id=user_id,
+            organization_id=org_id,
+        )
+    )
     db.commit()
     return RedirectResponse(url="/documentos", status_code=303)
 
 
 @router.post("/update")
-def update_doc(request: Request, doc_id: int = Form(...), name: str = Form(...), body: str = Form(""), db: Session = Depends(get_db)):
+def update_doc(
+    request: Request,
+    doc_id: int = Form(...),
+    name: str = Form(...),
+    body: str = Form(""),
+    db: Session = Depends(get_db),
+):
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
 
-    obj = db.get(DocTemplate, doc_id)
+    org_id = _org_id(request)
+    if not org_id:
+        return RedirectResponse(url="/logout", status_code=303)
+
+    obj = (
+        db.query(DocTemplate)
+        .filter(DocTemplate.id == doc_id, DocTemplate.organization_id == org_id)
+        .first()
+    )
     if obj:
         obj.name = name.strip()
         obj.body = body
@@ -102,11 +108,23 @@ def update_doc(request: Request, doc_id: int = Form(...), name: str = Form(...),
 
 
 @router.post("/delete")
-def delete_doc(request: Request, doc_id: int = Form(...), db: Session = Depends(get_db)):
+def delete_doc(
+    request: Request,
+    doc_id: int = Form(...),
+    db: Session = Depends(get_db),
+):
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
 
-    obj = db.get(DocTemplate, doc_id)
+    org_id = _org_id(request)
+    if not org_id:
+        return RedirectResponse(url="/logout", status_code=303)
+
+    obj = (
+        db.query(DocTemplate)
+        .filter(DocTemplate.id == doc_id, DocTemplate.organization_id == org_id)
+        .first()
+    )
     if obj:
         db.delete(obj)
         db.commit()
@@ -130,13 +148,20 @@ def render_doc(
 ):
     """
     Gera a versão preenchida do modelo.
-    Em vez de retornar texto puro (que pode parecer "tela branca"),
-    renderiza uma página HTML com o texto e botão de copiar.
+    Renderiza uma página HTML com o texto e botão de copiar.
     """
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
 
-    obj = db.get(DocTemplate, doc_id)
+    org_id = _org_id(request)
+    if not org_id:
+        return RedirectResponse(url="/logout", status_code=303)
+
+    obj = (
+        db.query(DocTemplate)
+        .filter(DocTemplate.id == doc_id, DocTemplate.organization_id == org_id)
+        .first()
+    )
     if not obj:
         return RedirectResponse(url="/documentos", status_code=303)
 
@@ -155,7 +180,6 @@ def render_doc(
     for k, v in repl.items():
         out = out.replace(k, v)
 
-    # Renderiza em HTML (melhor UX)
     return templates.TemplateResponse(
         "document_render.html",
         {"request": request, "title": obj.name, "text": out},
@@ -213,6 +237,7 @@ def gerar_documento_pdf(
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
 
+    # PDF aqui é "modelo" e não depende de DocTemplate; mas ainda exige login (ok)
     paciente = paciente.strip() or "__________"
     profissional = profissional.strip() or "__________"
     crp = crp.strip() or "__________"
