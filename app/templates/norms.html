@@ -1,64 +1,49 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Resoluções e guias</h1>
+<h1>Notas normativas</h1>
 <p class="muted">
-  Cadastre resoluções, artigos e sínteses, traduzindo normas em orientações práticas para a clínica.
+  Faça anotações de estudo sobre resoluções, guias e ética profissional. Este módulo <strong>não armazena</strong> as notas:
+  você pode <strong>copiar</strong> ou <strong>baixar em .txt</strong>.
 </p>
 
-<div class="grid2" style="margin-top:10px;">
+<div class="grid2" style="margin-top:10px; align-items:start;">
   <div class="card">
-    <h2>Novo resumo prático</h2>
-    <form method="post" action="/normas/add">
-      <label>Título</label>
-      <input name="title" required>
+    <h2>Notas (não armazenadas)</h2>
 
-      <label>Fonte (opcional)</label>
-      <input name="source">
+    <label>Título</label>
+    <input id="noteTitle" placeholder="Ex.: Resolução CFP 09/2024 — pontos-chave">
 
-      <label>Resumo prático</label>
-      <textarea name="practical_summary" rows="6"></textarea>
+    <label>Fonte (opcional)</label>
+    <input id="noteSource" placeholder="Link, referência, DOI, etc.">
 
-      <label>Tags</label>
-      <input name="tags">
+    <label>Notas</label>
+    <textarea id="noteBody" rows="10" placeholder="Resumo prático, insights, aplicação clínica, pontos de atenção..."></textarea>
 
-      <button type="submit">Salvar</button>
-    </form>
+    <label>Tags (opcional)</label>
+    <input id="noteTags" placeholder="Ex.: CFP, LGPD, sigilo, consentimento">
+
+    <div class="row" style="margin-top:10px;">
+      <button type="button" class="btn" onclick="copyNote()">Copiar</button>
+      <button type="button" class="btn" onclick="downloadNoteTxt()">Baixar .txt</button>
+      <button type="button" class="btn" onclick="clearNote()">Limpar</button>
+    </div>
+
+    <p class="muted" style="font-size:12px; margin-top:10px;">
+      Nota ética: evite incluir dados identificáveis. Prefira sínteses e orientações práticas.
+    </p>
   </div>
 
-  <div class="card">
-    <h2>Resoluções cadastradas</h2>
-
-    {% if cards|length == 0 %}
-      <p class="muted">Sem registros ainda.</p>
-    {% else %}
-      {% for c in cards %}
-        <div class="item">
-          <div class="itemhead">
-            <strong>{{ c.title }}</strong>
-            <span class="muted">{{ c.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
-          </div>
-
-          {% if c.source %}
-            <div class="muted">Fonte: {{ c.source }}</div>
-          {% endif %}
-
-          {% if c.tags %}
-            <div class="tag">Tags: {{ c.tags }}</div>
-          {% endif %}
-
-          {% if c.practical_summary %}
-            <pre class="pre">{{ c.practical_summary }}</pre>
-          {% endif %}
-
-          <form method="post" action="/normas/delete"
-                onsubmit="return confirm('Apagar este registro?');">
-            <input type="hidden" name="card_id" value="{{ c.id }}">
-            <button class="danger" type="submit">Apagar</button>
-          </form>
-        </div>
-      {% endfor %}
-    {% endif %}
+  <div class="card tip">
+    <h2>Como usar</h2>
+    <ol style="margin:0; padding-left:18px;">
+      <li>Registre a ideia central do documento (título + fonte).</li>
+      <li>Transforme a norma em orientação prática (o que fazer/evitar).</li>
+      <li>Baixe em .txt e arquive localmente.</li>
+    </ol>
+    <p class="muted" style="font-size:12px; margin-top:10px;">
+      Este espaço é formativo e organizacional. O armazenamento local é de responsabilidade do(a) profissional.
+    </p>
   </div>
 </div>
 
@@ -69,7 +54,6 @@
   Cards fixos para consulta rápida no dia a dia.
 </p>
 
-<!-- ✅ classe exclusiva para controlar altura só aqui -->
 <div class="grid norms-grid" style="margin-top:16px;">
 
   <!-- FIXO: Resolução CFP 09/2024 -->
@@ -97,6 +81,35 @@
       <a class="btn" target="_blank"
          href="https://atosoficiais.com.br/cfp/resolucao-do-exercicio-profissional-n-9-2024-regulamenta-o-exercicio-profissional-da-psicologia-mediado-por-tecnologias-digitais-da-informacao-e-da-comunicacao-tdics-em-territorio-nacional-e-revoga-as-resolucao-cfp-no-11-de-11-de-maio-de-2018-e-resolucao-cfp-no-04-de-26-de-marco-de-2020">
         Abrir Resolução CFP nº 09/2024
+      </a>
+    </div>
+  </div>
+
+  <!-- NOVO: Ferramentas para psicoterapia on-line -->
+  <div class="card editorial">
+    <h2>Ferramentas para psicoterapia on-line</h2>
+
+    <div class="content">
+      <p class="muted">
+        Plataformas de videochamada tendem a oferecer mais estabilidade para sessão do que mensageiros.
+        Priorize um setting digital com previsibilidade, privacidade e menos interrupções.
+      </p>
+
+      <div class="muted" style="font-size:14px; line-height:1.6;">
+        <strong>Recomendação prática:</strong>
+        <ul>
+          <li><strong>Prefira plataformas de videochamada</strong> (ex.: Google Meet) para reduzir quedas e interferências.</li>
+          <li><strong>WhatsApp não é o ideal para sessão</strong>: chamadas podem sofrer interrupções por notificações, instabilidade e limitações do app.</li>
+          <li>Combine um <strong>plano de contingência</strong> (ex.: “se cair, retorno em X minutos / canal alternativo”).</li>
+          <li>Oriente ambiente privado, fones quando necessário e teste prévio de áudio/vídeo.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:8px;">
+      <a class="btn secondary" target="_blank"
+         href="https://meet.google.com/landing?hs=197&pli=1&authuser=0">
+        Abrir Google Meet
       </a>
     </div>
   </div>
@@ -239,5 +252,109 @@
   </div>
 
 </div>
+
+<script>
+  async function copyNote() {
+    const title = document.getElementById("noteTitle")?.value?.trim() || "";
+    const source = document.getElementById("noteSource")?.value?.trim() || "";
+    const tags = document.getElementById("noteTags")?.value?.trim() || "";
+    const body = document.getElementById("noteBody")?.value?.trim() || "";
+
+    if (!title && !source && !tags && !body) {
+      alert("Não há conteúdo para copiar.");
+      return;
+    }
+
+    const text =
+`NOTAS NORMATIVAS — SETTING
+
+Título: ${title || "—"}
+Fonte: ${source || "—"}
+Tags: ${tags || "—"}
+
+Notas:
+${body || "—"}
+`;
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        alert("Texto copiado.");
+        return;
+      }
+    } catch (e) {}
+
+    const temp = document.createElement("textarea");
+    temp.value = text;
+    document.body.appendChild(temp);
+    temp.select();
+    document.execCommand("copy");
+    document.body.removeChild(temp);
+    alert("Texto copiado.");
+  }
+
+  function clearNote() {
+    const title = document.getElementById("noteTitle");
+    const source = document.getElementById("noteSource");
+    const tags = document.getElementById("noteTags");
+    const body = document.getElementById("noteBody");
+
+    const has = (title?.value || "").trim() || (source?.value || "").trim() || (tags?.value || "").trim() || (body?.value || "").trim();
+    if (has && !confirm("Limpar as notas atuais?")) return;
+
+    if (title) title.value = "";
+    if (source) source.value = "";
+    if (tags) tags.value = "";
+    if (body) body.value = "";
+    title?.focus();
+  }
+
+  function downloadNoteTxt() {
+    const title = document.getElementById("noteTitle")?.value?.trim() || "";
+    const source = document.getElementById("noteSource")?.value?.trim() || "";
+    const tags = document.getElementById("noteTags")?.value?.trim() || "";
+    const body = document.getElementById("noteBody")?.value?.trim() || "";
+
+    if (!title && !source && !tags && !body) {
+      alert("Não há conteúdo para baixar.");
+      return;
+    }
+
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    const hh = String(now.getHours()).padStart(2, "0");
+    const min = String(now.getMinutes()).padStart(2, "0");
+
+    const safeTitle = (title || "notas").replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 40);
+
+    const content =
+`NOTAS NORMATIVAS — SETTING
+Data/hora: ${dd}/${mm}/${yyyy} ${hh}:${min}
+
+Título: ${title || "—"}
+Fonte: ${source || "—"}
+Tags: ${tags || "—"}
+
+Notas:
+${body || "—"}
+
+----------------------------------------
+Arquivamento local sob responsabilidade do(a) profissional.
+`;
+
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `notas_${safeTitle}_${yyyy}-${mm}-${dd}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+</script>
 
 {% endblock %}
