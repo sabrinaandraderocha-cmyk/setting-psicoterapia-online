@@ -18,40 +18,45 @@
       <a href="/logout">Sair</a>
     </nav>
   </header>
+
   <main class="container">
     {% block content %}{% endblock %}
   </main>
+
   <footer class="footer">
-  <strong>Aviso ético:</strong>
-  O Setting é uma ferramenta de apoio à organização da psicoterapia on-line.
-  Não substitui prontuário clínico nem armazena dados sensíveis por padrão.
-  O uso é de responsabilidade do(a) profissional, conforme o Código de Ética
-  e as Resoluções do CFP.
-</footer>
-<script>
-  // ESC = Modo Sigilo (blur)
-  document.addEventListener('keydown', (e) => {
-    if (e.key === "Escape") {
-      document.body.classList.toggle("privacy-blur");
-    }
-  });
+    <div class="footer-inner">
+      <strong>Aviso ético:</strong>
+      O Setting é uma ferramenta de apoio à organização da psicoterapia on-line.
+      Não substitui prontuário clínico nem armazena dados sensíveis por padrão.
+      O uso é de responsabilidade do(a) profissional, conforme o Código de Ética
+      e as Resoluções do CFP.
+    </div>
+  </footer>
 
-  // Alt + D = Modo Escuro
-  document.addEventListener('keydown', (e) => {
-    if (e.altKey && (e.key === 'd' || e.key === 'D')) {
-      document.body.classList.toggle("dark-mode");
-      try { localStorage.setItem("setting_dark", document.body.classList.contains("dark-mode") ? "1" : "0"); } catch {}
-    }
-  });
-
-  // Persistência do modo escuro
-  (function() {
-    try {
-      if (localStorage.getItem("setting_dark") === "1") {
-        document.body.classList.add("dark-mode");
+  <script>
+    // ESC = Modo Sigilo (blur)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === "Escape") {
+        document.body.classList.toggle("privacy-blur");
       }
-    } catch {}
-  })();
-</script>
+    });
+
+    // Alt + D = Modo Escuro
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && (e.key === 'd' || e.key === 'D')) {
+        document.body.classList.toggle("dark-mode");
+        try { localStorage.setItem("setting_dark", document.body.classList.contains("dark-mode") ? "1" : "0"); } catch {}
+      }
+    });
+
+    // Persistência do modo escuro
+    (function() {
+      try {
+        if (localStorage.getItem("setting_dark") === "1") {
+          document.body.classList.add("dark-mode");
+        }
+      } catch {}
+    })();
+  </script>
 </body>
 </html>
