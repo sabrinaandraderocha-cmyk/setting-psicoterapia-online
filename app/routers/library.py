@@ -13,9 +13,17 @@ templates = Jinja2Templates(directory="app/templates")
 # Diretório base do app
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-# Pasta onde os arquivos PDF serão salvos
+# Pasta onde os arquivos serão salvos
 UPLOAD_DIR = os.path.join(BASE_DIR, "data", "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+
+def _org_id(request: Request) -> int | None:
+    return request.session.get("org_id")
+
+
+def _user_id(request: Request) -> int | None:
+    return request.session.get("user_id")
 
 
 @router.get("")
@@ -23,18 +31,20 @@ def lib_home(request: Request, db: Session = Depends(get_db)):
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
 
+    org_id = _org_id(request)
+    if not org_id:
+        return RedirectResponse(url="/logout", status_code=303)
+
     items = (
         db.query(LibraryItem)
+        .filter(LibraryItem.organization_id == org_id)
         .order_by(LibraryItem.created_at.desc())
         .all()
     )
 
     return templates.TemplateResponse(
         "biblioteca.html",
-        {
-            "request": request,
-            "items": items
-        }
+        {"request": request, "items": items}
     )
 
 
@@ -49,12 +59,22 @@ async def upload(
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
 
+    org_id = _org_id(request)
+    user_id = _user_id(request)
+    if not org_id or not user_id:
+        return RedirectResponse(url="/logout", status_code=303)
+
     safe_name = (
-        file.filename
+        (file.filename or "arquivo")
         .replace("..", "")
         .replace("/", "_")
         .replace("\\", "_")
     )
+
+    # (Opcional, mas recomendado) evitar colisão de nome:
+    # prefixa com org_id e timestamp pra não sobrescrever
+    ts = int(__import__("time").time())
+    safe_name = f"org{org_id}_{ts}_{safe_name}"
 
     dest = os.path.join(UPLOAD_DIR, safe_name)
 
@@ -64,6 +84,8 @@ async def upload(
 
     db.add(
         LibraryItem(
+            owner_id=user_id,
+            organization_id=org_id,
             title=title.strip(),
             filename=safe_name,
             notes=notes.strip(),
@@ -83,7 +105,15 @@ def download_file(
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
 
-    item = db.get(LibraryItem, item_id)
+    org_id = _org_id(request)
+    if not org_id:
+        return RedirectResponse(url="/logout", status_code=303)
+
+    item = (
+        db.query(LibraryItem)
+        .filter(LibraryItem.id == item_id, LibraryItem.organization_id == org_id)
+        .first()
+    )
     if not item:
         return RedirectResponse(url="/biblioteca", status_code=303)
 
@@ -103,7 +133,15 @@ def delete_item(
     if not require_auth(request):
         return RedirectResponse(url="/login", status_code=303)
 
-    item = db.get(LibraryItem, item_id)
+    org_id = _org_id(request)
+    if not org_id:
+        return RedirectResponse(url="/logout", status_code=303)
+
+    item = (
+        db.query(LibraryItem)
+        .filter(LibraryItem.id == item_id, LibraryItem.organization_id == org_id)
+        .first()
+    )
     if item:
         path = os.path.join(UPLOAD_DIR, item.filename)
         try:
