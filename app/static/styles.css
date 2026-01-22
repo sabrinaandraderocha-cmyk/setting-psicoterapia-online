@@ -391,3 +391,27 @@ details summary {
   border-top: 1px solid #1f2937;
   color: #9ca3af;
 }
+/* =========================
+   Normas: grid específico (não mexe na Home)
+   ========================= */
+.norms-grid .card{
+  min-height: auto;      /* anula o min-height da Home */
+  height: 100%;          /* iguala alturas por linha */
+}
+
+.norms-grid{
+  align-items: stretch;  /* estica itens da linha */
+}
+
+.norms-grid .card{
+  display: flex;
+  flex-direction: column;
+}
+
+.norms-grid .card .content{
+  flex: 1;               /* conteúdo ocupa o meio */
+}
+
+.norms-grid .row{
+  margin-top: auto;      /* ações ficam no fim do card */
+}
