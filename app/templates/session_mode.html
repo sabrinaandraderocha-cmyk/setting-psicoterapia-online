@@ -14,7 +14,7 @@
 
   <div class="grid2">
     <div class="card">
-      <h2>Registro mínimo (não armazenado)</h2>
+      <h2>Registro mínimo (não armazenável)</h2>
       <p class="muted" style="margin-top:-6px;">
         Foque nas <strong>suas intervenções e decisões clínicas</strong> (conforme sua abordagem), sem detalhar a história do caso.
       </p>
@@ -77,7 +77,7 @@
       if (!textarea) return;
       if (!confirmReplaceIfNeeded(textarea)) return;
 
-      textarea.value =
+      textarea.value = `MODELO (NÃO ARMAZENÁVEL) — ABORDAGEM HUMANISTA
 
 Foco vivido / tema emergente (experiência):
 - 
@@ -99,6 +99,7 @@ Continuidade (próximos passos / encaminhamentos):
 
 Observação ética:
 - Mínimo necessário, sem dados identificáveis e sem narrativa detalhada do caso.`;
+      textarea.focus();
     }
 
     function insertTemplateTCC() {
@@ -106,7 +107,7 @@ Observação ética:
       if (!textarea) return;
       if (!confirmReplaceIfNeeded(textarea)) return;
 
-      textarea.value =
+      textarea.value = `MODELO (NÃO ARMAZENÁVEL) — TCC
 
 Agenda / foco da sessão:
 - 
@@ -137,6 +138,7 @@ Combinados e limites do setting:
 
 Observação ética:
 - Registro mínimo necessário, sem dados identificáveis e sem narrativa detalhada do caso.`;
+      textarea.focus();
     }
 
     function insertTemplatePsicanalise() {
@@ -144,7 +146,7 @@ Observação ética:
       if (!textarea) return;
       if (!confirmReplaceIfNeeded(textarea)) return;
 
-      textarea.value =
+      textarea.value = `MODELO (NÃO ARMAZENÁVEL) — PSICANÁLISE
 
 Tema dominante / material emergente (sem detalhes identificáveis):
 - 
@@ -171,14 +173,30 @@ Indicações de continuidade (próximos passos / encaminhamentos):
 
 Observação ética:
 - Mínimo necessário, sem dados identificáveis e sem narrativa detalhada do caso.`;
+      textarea.focus();
     }
 
-    function copyText() {
+    async function copyText() {
       const textarea = document.getElementById("sessionContent");
       if (!textarea || !textarea.value.trim()) {
         alert("Não há conteúdo para copiar.");
         return;
       }
+
+      const text = textarea.value;
+
+      // Preferir API moderna
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          alert("Texto copiado.");
+          return;
+        }
+      } catch (e) {
+        // cai no fallback
+      }
+
+      // Fallback antigo
       textarea.select();
       textarea.setSelectionRange(0, 999999);
       document.execCommand("copy");
@@ -190,6 +208,7 @@ Observação ética:
       if (!textarea) return;
       if (textarea.value.trim() && !confirm("Limpar o texto atual?")) return;
       textarea.value = "";
+      textarea.focus();
     }
 
     function downloadTxt() {
@@ -213,7 +232,7 @@ Observação ética:
       const aliasSafe = aliasRaw ? aliasRaw.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 40) : "sem_codigo";
 
       const header =
-`SETTING — REGISTRO DE SESSÃO (mínimo necessário)
+`SETTING — MODO SESSÃO (NÃO ARMAZENÁVEL)
 Data/hora: ${dd}/${mm}/${yyyy} ${hh}:${min}
 Paciente/código: ${aliasRaw || "—"}
 
