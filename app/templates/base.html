@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+
+  <!-- ================= TOPBAR ================= -->
   <header class="topbar">
     <div class="brand">Setting · psicoterapia on-line</div>
     <nav class="nav">
@@ -19,20 +21,25 @@
     </nav>
   </header>
 
+  <!-- ================= CONTEÚDO ================= -->
   <main class="container">
     {% block content %}{% endblock %}
   </main>
 
+  <!-- ================= RODAPÉ / AVISO ÉTICO ================= -->
   <footer class="footer">
-    <div class="footer-inner">
+    <div class="container">
       <strong>Aviso ético:</strong>
       O Setting é uma ferramenta de apoio à organização da psicoterapia on-line.
       Não substitui prontuário clínico nem armazena dados sensíveis por padrão.
       O uso é de responsabilidade do(a) profissional, conforme o Código de Ética
       e as Resoluções do CFP.
+      <br><br>
+      <a href="/termos">Termos de Uso</a>
     </div>
   </footer>
 
+  <!-- ================= SCRIPTS ================= -->
   <script>
     // ESC = Modo Sigilo (blur)
     document.addEventListener('keydown', (e) => {
@@ -45,12 +52,17 @@
     document.addEventListener('keydown', (e) => {
       if (e.altKey && (e.key === 'd' || e.key === 'D')) {
         document.body.classList.toggle("dark-mode");
-        try { localStorage.setItem("setting_dark", document.body.classList.contains("dark-mode") ? "1" : "0"); } catch {}
+        try {
+          localStorage.setItem(
+            "setting_dark",
+            document.body.classList.contains("dark-mode") ? "1" : "0"
+          );
+        } catch {}
       }
     });
 
     // Persistência do modo escuro
-    (function() {
+    (function () {
       try {
         if (localStorage.getItem("setting_dark") === "1") {
           document.body.classList.add("dark-mode");
@@ -58,5 +70,6 @@
       } catch {}
     })();
   </script>
+
 </body>
 </html>
