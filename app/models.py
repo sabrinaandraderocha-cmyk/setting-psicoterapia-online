@@ -350,3 +350,24 @@ class LibraryItem(Base):
 
     owner = relationship("User")
     organization = relationship("Organization")
+from sqlalchemy import Boolean
+
+class InviteRequest(Base):
+    __tablename__ = "invite_requests"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    name: Mapped[str] = mapped_column(String(120), default="")
+    email: Mapped[str] = mapped_column(String(255), index=True, nullable=False)
+
+    # texto livre (motivo / vínculo / clínica)
+    message: Mapped[str] = mapped_column(Text, default="")
+
+    # status
+    handled: Mapped[bool] = mapped_column(Boolean, default=False)
+    handled_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+    # opcional: qual convite foi gerado
+    invite_code: Mapped[str] = mapped_column(String(32), default="")
