@@ -34,7 +34,12 @@
             {% else %}
               <span class="pill">member</span>
             {% endif %}
+
+            {% if u.id == request.session.get("user_id") %}
+              <span class="pill">você</span>
+            {% endif %}
           </div>
+
           <div class="muted" style="margin-top:6px;">
             Criado em: {% if u.created_at %}{{ u.created_at.strftime("%d/%m/%Y %H:%M") }}{% else %}-{% endif %}
           </div>
@@ -47,10 +52,14 @@
               <button type="submit">Tornar admin</button>
             </form>
           {% else %}
-            <form method="post" action="/admin/usuarios/remover-admin" onsubmit="return confirm('Remover admin deste usuário?');">
-              <input type="hidden" name="user_id" value="{{ u.id }}">
-              <button class="danger" type="submit">Remover admin</button>
-            </form>
+            {% if u.id == request.session.get("user_id") %}
+              <!-- Não mostrar botão para remover o próprio admin -->
+            {% else %}
+              <form method="post" action="/admin/usuarios/remover-admin" onsubmit="return confirm('Remover admin deste usuário?');">
+                <input type="hidden" name="user_id" value="{{ u.id }}">
+                <button class="danger" type="submit">Remover admin</button>
+              </form>
+            {% endif %}
           {% endif %}
         </div>
       </div>
