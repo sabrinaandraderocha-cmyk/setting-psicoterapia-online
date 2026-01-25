@@ -28,7 +28,7 @@ from .seed import seed_doc_templates
 from .seed_multi import seed_org_and_admin
 
 # ============================
-# App
+# APP
 # ============================
 app = FastAPI(title=settings.app_name)
 
@@ -40,25 +40,18 @@ app.add_middleware(
     secret_key=os.getenv("SECRET_KEY", "change-me-now"),
     same_site="lax",
     https_only=True,
-    max_age=60 * 30,  # 30 minutos
+    max_age=60 * 30,  # cookie expira em 30 min
 )
 
 # ============================
 # AUTO-LOGOUT POR INATIVIDADE
-# (SAFE VERSION – não derruba o app)
 # ============================
 @app.middleware("http")
 async def session_timeout_middleware(request: Request, call_next):
-    # ⚠️ NÃO usar request.session direto
-    session = request.scope.get("session")
 
-    # Se sessão não existir, segue normal
-    if session is None:
-        return await call_next(request)
-
-    # Rotas públicas (não controla sessão)
     public_prefixes = (
         "/login",
+        "/logout",
         "/signup",
         "/solicitar-convite",
         "/static",
@@ -69,6 +62,8 @@ async def session_timeout_middleware(request: Request, call_next):
 
     if request.url.path.startswith(public_prefixes):
         return await call_next(request)
+
+    session = request.session
 
     if session.get("user_id"):
         now = datetime.utcnow()
@@ -84,22 +79,24 @@ async def session_timeout_middleware(request: Request, call_next):
                 session.clear()
                 return RedirectResponse(url="/login", status_code=303)
 
-        # atualiza atividade
+        # atualiza atividade SEMPRE
         session["last_activity"] = now.isoformat()
 
-    response = await call_next(request)
-    return response
+    return await call_next(request)
+
+# ============================
+# LOGOUT MANUAL
+# ============================
+@app.get("/logout")
+def logout(request: Request):
+    request.session.clear()
+    return RedirectResponse(url="/login", status_code=303)
 
 # ============================
 # STARTUP
 # ============================
 @app.on_event("startup")
 def on_startup():
-    """
-    - Cria tabelas automaticamente
-    - Reset do banco SOMENTE se RESET_DB=1
-    - Seed inicial controlado
-    """
     if os.getenv("RESET_DB") == "1":
         Base.metadata.drop_all(bind=engine)
 
@@ -113,7 +110,7 @@ def on_startup():
         db.close()
 
 # ============================
-# Arquivos estáticos e templates
+# STATIC + TEMPLATES
 # ============================
 app.mount(
     "/static",
@@ -124,7 +121,7 @@ app.mount(
 templates = Jinja2Templates(directory="app/templates")
 
 # ============================
-# Rotas
+# ROTAS
 # ============================
 app.include_router(auth.router)
 app.include_router(session_mode.router)
