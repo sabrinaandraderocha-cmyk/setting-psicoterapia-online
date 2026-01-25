@@ -350,3 +350,14 @@ hr {
   border-top: 1px solid #1f2937;
   color: #9ca3af;
 }
+
+/* =========================
+   🔧 AJUSTE: botões de login do mesmo tamanho
+   (use no login.html: <div class="row auth-actions">...)
+   ========================= */
+.auth-actions .btn,
+.auth-actions button,
+.auth-actions a.btn {
+  min-width: 150px;
+  justify-content: center;
+}
