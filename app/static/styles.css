@@ -1,19 +1,17 @@
 /* ==========================================================================
-   VARIÁVEIS GLOBAIS (PALETA NOVA: Roxo Profundo & Profissional)
+   VARIÁVEIS GLOBAIS (PALETA SETTING - ROXO PROFISSIONAL)
    ========================================================================== */
 :root {
-  --bg: #f9fafb;           /* Fundo da página (cinza muito suave) */
-
-  /* Cores dos Cards e Textos */
+  --bg: #f9fafb;           /* Fundo da página */
   --card: #ffffff;         /* Branco puro */
-  --text: #111827;         /* Preto suave (Gray 900) para leitura */
-  --muted: #4b5563;        /* Cinza médio (Gray 600) para descrições */
+  --text: #111827;         /* Preto suave (Gray 900) */
+  --muted: #4b5563;        /* Cinza médio (Gray 600) */
   --border: #e5e7eb;       /* Bordas sutis */
 
   /* Acento Principal (Ethos / Setting) */
-  --accent: #6D28D9;       /* Roxo vibrante (Violet 700) */
-  --accent-dark: #4C1D95;  /* Roxo escuro para hover (Violet 900) */
-  --accent-soft: #F5F3FF;  /* Fundo lavanda muito claro (Violet 50) */
+  --accent: #6D28D9;       /* Roxo vibrante */
+  --accent-dark: #4C1D95;  /* Roxo escuro para hover */
+  --accent-soft: #F5F3FF;  /* Fundo lavanda muito claro */
 
   /* Estados */
   --danger: #dc2626;       /* Vermelho erro */
@@ -52,7 +50,8 @@ a:hover { color: var(--accent-dark); }
   padding: 24px 16px;
 }
 
-.narrow { max-width: 520px; margin: 40px auto; } /* Usado em login/signup */
+/* Área estreita para Login/Cadastro */
+.narrow { max-width: 520px; margin: 40px auto; } 
 
 /* ==========================================================================
    TOPBAR (NAVEGAÇÃO)
@@ -88,20 +87,8 @@ a:hover { color: var(--accent-dark); }
 /* ==========================================================================
    TIPOGRAFIA
    ========================================================================== */
-h1 {
-  font-size: 26px;
-  font-weight: 700;
-  margin: 0 0 8px;
-  color: var(--text);
-}
-
-h2 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0 0 12px;
-  color: var(--text);
-}
-
+h1 { font-size: 26px; font-weight: 700; margin: 0 0 8px; color: var(--text); }
+h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; color: var(--text); }
 .muted { color: var(--muted); }
 
 /* ==========================================================================
@@ -132,50 +119,30 @@ h2 {
   transition: box-shadow 0.2s;
 }
 
-.card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
+.card:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 
-/* Estilo para Cards Editoriais (com textos longos/listas) */
-.card.editorial {
-  gap: 12px;
-}
-.card.editorial ul {
-  padding-left: 20px;
-  margin: 8px 0;
-  color: var(--muted);
-}
-.card.editorial li {
-  margin-bottom: 6px;
-}
-.card.editorial strong {
-  color: var(--accent-dark);
-}
+/* Estilo para Cards Editoriais (Normas/Biblioteca - Listas e Textos) */
+.card.editorial { gap: 12px; }
+.card.editorial ul { padding-left: 20px; margin: 8px 0; color: var(--muted); }
+.card.editorial li { margin-bottom: 6px; }
+.card.editorial strong { color: var(--accent-dark); }
 
 /* Card de Dicas/Instruções */
-.card.tip {
-  background-color: var(--accent-soft);
-  border-color: rgba(109, 40, 217, 0.2); /* Roxo transparente */
+.card.tip { 
+  background-color: var(--accent-soft); 
+  border-color: rgba(109, 40, 217, 0.2); 
 }
-.card.tip h2 {
-  color: var(--accent-dark);
-}
+.card.tip h2 { color: var(--accent-dark); }
 
 /* ==========================================================================
-   FORMULÁRIOS
+   FORMULÁRIOS (CORREÇÃO CRÍTICA PARA BIBLIOTECA)
    ========================================================================== */
-label {
-  display: block;
-  margin: 12px 0 6px;
-  color: var(--text);
-  font-size: 14px;
-  font-weight: 500;
-}
+label { display: block; margin: 12px 0 6px; color: var(--text); font-size: 14px; font-weight: 500; }
 
 input, select, textarea {
   width: 100%;
-  background: #fff;
-  color: var(--text);
+  background-color: #ffffff !important; /* Força fundo branco */
+  color: #111827 !important;           /* Força texto preto (evita sumir palavras) */
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 12px;
@@ -187,76 +154,63 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.15); /* Glow roxo */
+  box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.15);
 }
 
 textarea { resize: vertical; min-height: 100px; }
 
 /* ==========================================================================
-   BOTÕES (MELHORADOS E PADRONIZADOS)
+   BOTÕES (CORREÇÃO DE TAMANHOS)
    ========================================================================== */
 button, .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--accent);
-  color: #ffffff !important; /* Força o branco para legibilidade */
+  color: #ffffff !important;
   border: 1px solid transparent;
   border-radius: 8px;
-  padding: 12px 18px; /* Padding ajustado para preenchimento melhor */
+  padding: 10px 18px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   text-decoration: none;
-  width: 100%; /* Padroniza largura nos cards e login */
-  margin-top: auto; /* Garante que o botão fique no final do card */
+  width: auto; /* IMPORTANTE: Volta ao tamanho automático para não quebrar a biblioteca */
 }
 
+/* Aplica largura total (100%) APENAS nos botões de Login e Links da Home */
+.narrow button, 
+.narrow .btn,
+.card > a.btn { 
+  width: 100%;
+  text-align: center;
+  margin-top: auto; 
+}
+
+/* Efeito Hover Padrão */
 button:hover, .btn:hover {
   background: var(--accent-dark);
-  color: #ffffff !important;
   box-shadow: 0 4px 12px rgba(109, 40, 217, 0.2);
+  color: #ffffff !important;
 }
 
 /* Botão Secundário (Outline) */
 .btn.secondary {
   background: transparent;
-  color: var(--accent);
+  color: var(--accent) !important;
   border: 1px solid var(--border);
-  width: auto; /* Mantém largura automática para botões de navegação */
 }
 
 .btn.secondary:hover {
   background: var(--accent-soft);
   border-color: var(--accent);
-  color: var(--accent-dark);
+  color: var(--accent-dark) !important;
 }
 
 /* Botão de Perigo */
-button.danger, .btn.danger {
-  background: var(--danger);
-  color: white;
-}
+button.danger, .btn.danger { background: var(--danger); color: white !important; }
 button.danger:hover { background: #b91c1c; }
-
-/* Grupo de Botões (Auth Actions) */
-.row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.auth-actions {
-  display: flex;
-  gap: 12px;
-  width: 100%;
-}
-.auth-actions .btn {
-  flex: 1;
-  text-align: center;
-}
 
 /* ==========================================================================
    TAGS E UTILITÁRIOS
@@ -273,15 +227,10 @@ button.danger:hover { background: #b91c1c; }
   margin-right: 6px;
 }
 
-hr {
-  border: 0;
-  height: 1px;
-  background: var(--border);
-  margin: 24px 0;
-}
+hr { border: 0; height: 1px; background: var(--border); margin: 24px 0; }
 
 /* ==========================================================================
-   RESPONSIVO
+   RESPONSIVO E MODO ESCURO
    ========================================================================== */
 @media (max-width: 768px) {
   .grid2 { grid-template-columns: 1fr; }
@@ -290,9 +239,6 @@ hr {
   .container { padding: 16px; }
 }
 
-/* ==========================================================================
-   MODO ESCURO
-   ========================================================================== */
 body.dark-mode {
   --bg: #0f172a;
   --card: #1e293b;
@@ -302,8 +248,7 @@ body.dark-mode {
   --accent-soft: #1e293b;
 }
 
-body.dark-mode input, 
-body.dark-mode textarea {
-  background: #0f172a;
-  color: #fff;
+body.dark-mode input, body.dark-mode textarea {
+  background: #0f172a !important;
+  color: #fff !important;
 }
