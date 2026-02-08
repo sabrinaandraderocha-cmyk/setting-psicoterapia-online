@@ -193,27 +193,30 @@ input:focus, select:focus, textarea:focus {
 textarea { resize: vertical; min-height: 100px; }
 
 /* ==========================================================================
-   BOTÕES
+   BOTÕES (MELHORADOS E PADRONIZADOS)
    ========================================================================== */
 button, .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--accent);
-  color: #ffffff;
+  color: #ffffff !important; /* Força o branco para legibilidade */
   border: 1px solid transparent;
   border-radius: 8px;
-  padding: 10px 18px;
+  padding: 12px 18px; /* Padding ajustado para preenchimento melhor */
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   text-decoration: none;
+  width: 100%; /* Padroniza largura nos cards e login */
+  margin-top: auto; /* Garante que o botão fique no final do card */
 }
 
 button:hover, .btn:hover {
   background: var(--accent-dark);
-  color: #ffffff;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(109, 40, 217, 0.2);
 }
 
 /* Botão Secundário (Outline) */
@@ -221,6 +224,7 @@ button:hover, .btn:hover {
   background: transparent;
   color: var(--accent);
   border: 1px solid var(--border);
+  width: auto; /* Mantém largura automática para botões de navegação */
 }
 
 .btn.secondary:hover {
@@ -281,13 +285,13 @@ hr {
    ========================================================================== */
 @media (max-width: 768px) {
   .grid2 { grid-template-columns: 1fr; }
-  .nav { display: none; } /* Simples hide para mobile, ideal seria menu burger */
+  .nav { display: none; } 
   .topbar { padding: 12px 16px; }
   .container { padding: 16px; }
 }
 
 /* ==========================================================================
-   MODO ESCURO (Opcional - mantido caso use JS para ativar)
+   MODO ESCURO
    ========================================================================== */
 body.dark-mode {
   --bg: #0f172a;
